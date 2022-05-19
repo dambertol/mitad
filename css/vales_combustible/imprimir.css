@@ -1,0 +1,43 @@
+@charset "utf-8";
+/* CSS Document */
+
+.tabla_impresion_vales {
+	border: solid 1px;
+	position:relative;
+	float:left;
+	width:372px;
+	font-family:serif;
+	margin:1px;
+}
+.tabla_impresion_vales tr {
+	border:1px solid;
+}
+.tabla_impresion_vales td {
+	padding:2px 4px;
+}
+.tabla_impresion_vales td span {
+	line-height:20px;
+}
+.area_impresion_vales {
+	display:inline-block; 
+	white-space:nowrap; 
+	overflow:hidden; 
+	text-overflow:clip; 
+	width:362px;
+}
+@media all {
+	.page-break	{ display: none; }
+}
+@media print {
+	.navbar,
+	.cabecera_logo_avisos,
+	footer,
+	.hide_print {
+		display:none;
+	}
+	.page-break	{
+		display: block;
+		break-after: always;
+		page-break-after: always;
+	}
+}

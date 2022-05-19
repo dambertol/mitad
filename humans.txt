@@ -1,0 +1,11 @@
+/* TEAM */
+	Developer: Leandro Corsino
+	Contact: lcorsino [at] lujandecuyo.gob.ar
+	From: Mendoza, Argentina
+
+
+/* SITE */
+	Last update: 2020/09/10
+	Language: Spanish
+	Doctype: HTML5
+	IDE: NetBeans

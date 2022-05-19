@@ -1,0 +1,18 @@
+@charset "utf-8";
+/* CSS Document */
+body{
+	font-family: arial;
+}
+table{
+	border-collapse: collapse;
+	font-size:11px;
+	line-height:normal;
+	width:100%;
+}
+table td{
+	vertical-align: top;
+	padding-left: 2px;
+}
+.medidas td{
+	border: none;
+}

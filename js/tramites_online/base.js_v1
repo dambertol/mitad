@@ -1,0 +1,59 @@
+function buscar_tipo_tramite() {
+    var categoria_id = $("#categoria").val();
+    $('#tipo').find('option').remove();
+    $("#tipo").selectpicker("refresh");
+    $.ajax({
+        type: "POST",
+        url: "tramites_online/ajax/buscar_tipo_tramite",
+        dataType: "json",
+        data: {categoria_id: categoria_id, csrf_mlc2: csrfData}
+    }).done(function (data) {
+        if (data['no_data'] === undefined) {
+            data.tipo_tramite.forEach(function (tipo, index) {
+                $("#tipo").append('<option value="' + tipo.id + '" selected="">' + tipo.nombre + '</option>');
+            });
+        } else {
+            $("#tipo").val('');
+        }
+        $("#tipo").selectpicker("refresh");
+    });
+}
+
+function buscar_persona(id) {
+    $.ajax({
+        type: "POST",
+        url: "personas/get_persona",
+        dataType: "json",
+        data: {id: id, csrf_mlc2: csrfData}
+    }).done(function (data) {
+        var persona = null;
+        if (data['error'] === undefined) {
+            persona = data.persona;
+            $("#dni").val(persona['dni']);
+            $("#sexo").selectpicker('val', persona['sexo']);
+            $("#cuil").val(persona['cuil']);
+            $("#nombre").val(persona['nombre']);
+            $("#apellido").val(persona['apellido']);
+            $("#telefono").val(persona['telefono']);
+            $("#celular").val(persona['celular']);
+            $("#email").val(persona['email']);
+            $("#fecha_nacimiento").val(persona['fecha_nacimiento']);
+            $("#nacionalidad").selectpicker('val', persona['nacionalidad_id']);
+        } else {
+            limpiar_persona();
+        }
+    });
+}
+
+function limpiar_persona() {
+    $("#dni").val('');
+    $("#sexo").selectpicker('val', null);
+    $("#cuil").val('');
+    $("#nombre").val('');
+    $("#apellido").val('');
+    $("#telefono").val('');
+    $("#celular").val('');
+    $("#email").val('');
+    $("#fecha_nacimiento").val('');
+    $("#nacionalidad").selectpicker('val', null);
+}

@@ -1,0 +1,29 @@
+
+
+{
+	"processing":     "<div id=\"loader-ajax\"><img alt=\"LC\" src=\"img/generales/logo_lujan_001.png\"/></div>",
+	"lengthMenu":     "Registros por página: _MENU_",
+	"zeroRecords":    "No se encontraron resultados",
+	"emptyTable":     "Ningún dato disponible en esta tabla",
+	"info":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+	"infoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+	"infoFiltered":   "(filtrado de un total de _MAX_ registros)",
+	"infoPostFix":    "",
+	"search":         "Buscar:",
+	"url":            "",
+	"infoThousands":  ",",
+	"loadingRecords": "Cargando...",
+	"buttons": {
+		"print":			"Imprimir tabla"
+	},
+	"paginate": {
+		"sFirst":    " << ",
+		"sLast":     " >> ",
+		"sNext":     " > ",
+		"sPrevious": " < "
+	},
+	"aria": {
+		"sortAscending":  ": Activar para ordenar la columna de manera ascendente",
+		"sortDescending": ": Activar para ordenar la columna de manera descendente"
+	}
+}

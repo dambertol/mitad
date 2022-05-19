@@ -1,0 +1,169 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,900,700,500,300,100);
+
+body {
+	font-family: "Helvetica Neue", 'Roboto', Arial, "Droid Sans", sans-serif;
+	position: relative;
+}
+@media (min-width: 1200px)
+{
+	.container {
+    width: 100%;
+	}
+}
+.in-page {
+	min-height: 520px;
+}
+.main {
+	position: relative;
+}
+a {
+	color: #FFD318;
+}
+a:hover, a:focus {
+	color: #FFD318;
+}
+.btn-cyan {
+	background-color: #FFD318;
+	color: #fff;
+}
+.btn-cyan:hover {
+	color: #fff;
+	opacity: 0.9;
+}
+.min-height {
+	min-height: 380px;
+}
+.login-screen {
+	background-image: url(/img/transferencias/bg_login_001.jpeg);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
+	-moz-background-size: cover;
+	-webkit-background-size: cover;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+}
+.login-screen:before {
+	content: "";
+	background: rgba(0,0,0, 0.5);
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+.login-center {
+	text-align: left;
+}
+.login {
+	float: right;
+	width: 320px;
+	color: #fff;
+}
+.login .login-form {
+	text-align: left;
+}
+.login label {
+	color: #fff;
+}
+.login-form .input-group .form-control {
+	background: none;
+	height: 44px;
+	color: #fff;
+}
+.login-form .input-group .input-group-addon {
+	background: none;
+}
+.login-form .input-group .input-group-addon .glyphicon {
+	color: #fff;
+}
+.login-form .input-group .form-control::-moz-placeholder {
+	color: #fff;
+	opacity: 0.3;
+}
+.login .sign-btn input.btn {
+	background: #FFD318;
+	border-color: #FFD318;
+	color: #fff;
+	width: 180px;
+}
+.login .sign-btn a {
+	text-decoration: none;
+}
+.login .checkbox {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+.login .forgot {
+	display: inline-block;
+	margin: 20px 0;
+}
+
+/* BOOTSTRAP */
+.alert-danger, 
+.alert-error {
+	background-color: rgba(231,76,60,0.88);
+	border-color: rgba(231,76,60,0.88);
+	color: #fff;
+}
+.alert-fixed {
+	position:fixed;
+	top: 30px;
+	left: 10px;
+	z-index:9999;
+	min-width:360px;
+	min-height:100px;
+}
+.alert-fixed p {
+	white-space:nowrap;
+}
+.btn-primary {
+	color: #FFD318;
+	background-color: #4E4C4E;
+	border-color: #4E4C4E;
+}
+.btn-primary:focus,
+.btn-primary.focus {
+	color: #4E4C4E;
+	background-color: #FFD318;
+	border-color: #FFD318;
+}
+.btn-primary:hover {
+	color: #4E4C4E;
+	background-color: #FFD318;
+	border-color: #FFD318;
+}
+.btn-primary:active,
+.btn-primary.active,
+.open > .dropdown-toggle.btn-primary {
+	color: #4E4C4E;
+	background-color: #FFD318;
+	border-color: #FFD318;
+}
+.btn-primary:active:hover,
+.btn-primary.active:hover,
+.open > .dropdown-toggle.btn-primary:hover,
+.btn-primary:active:focus,
+.btn-primary.active:focus,
+.open > .dropdown-toggle.btn-primary:focus,
+.btn-primary:active.focus,
+.btn-primary.active.focus,
+.open > .dropdown-toggle.btn-primary.focus {
+	color: #4E4C4E;
+	background-color: #FFD318;
+	border-color: #FFD318;
+}
+.checkbox label, 
+.radio label {
+	padding-left: 0;
+}
+.form-control:focus {
+	border-color: #FFD318;
+}
+.alert-danger, .alert-error {
+	color: #fff;
+}

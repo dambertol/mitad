@@ -1,0 +1,92 @@
+@charset "utf-8";
+/* CSS Document */
+table{
+	background-color:#fff;
+	max-width:840px;
+	margin:0 auto;
+	font-size:11px;
+	line-height:normal;
+	width:100%;
+}
+td, th {
+    padding:0 2px;
+}
+#datos-padron{
+	text-align:center;
+	border-top:2px solid;
+	border-bottom:2px solid;
+}
+#deuda{
+	text-align:right;
+}
+.container-table{
+	margin: 0 15px;
+}
+.botones_informe{
+	text-align:center;
+	padding: 10px;
+}
+.tbl_deudas_content{
+	vertical-align: top;
+	text-align:left;
+}
+.tbl_deudas_title{
+	vertical-align: top;
+	text-align:right;
+	font-weight:bold;
+	padding-right:8px;
+}
+.tbl_deudas_totales{
+	border:1px solid;
+	font-weight:bold;
+}
+.tbl_deudas_bc_ccc{
+	background: #ddd !important;
+}
+.tbl_deudas_bc_999{
+	background: #bbb !important;
+}
+@media (max-width: 768px) {
+	.container-table{
+		width:auto;
+		overflow-x:auto;
+	}
+}
+@media print {
+	.botones_informe{
+		display: none !important;
+	}
+	.nav_menu{
+		display: none !important;
+	}
+	.page-title{
+		display: none !important;
+	}
+	.x_panel{
+		border:none;
+	}
+	.x_title{
+		display: none !important;
+	}
+	.ln_solid{
+		display: none !important;
+	}
+	.btn{
+		display: none !important;
+	}
+	footer{
+		display: none !important;
+	}
+	table{
+		font-size:9px;
+	}
+	.container-table{
+		overflow-x:hidden;
+	}
+	.right_col {
+		padding: 0 !important;
+	}
+	.col-xs-12 {
+		padding: 0 !important;
+	}
+}
