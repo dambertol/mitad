@@ -1,5 +1,5 @@
 <?php
-//editado por yoel grosso
+//editado por yoel grosso           esto ni hace falta
 if (!function_exists('dt_column_oficina_de_empleo_estado')) {
 
     function dt_column_oficina_de_empleo_estado($estado) {

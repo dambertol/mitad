@@ -140,8 +140,8 @@
                     </div>
                     </div>
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['nivel_estudio']['label']; ?> 
-                                <?php echo $fields['nivel_estudio']['form']; ?> 
+                                <?php echo $fields['nivel']['label']; ?> 
+                                <?php echo $fields['nivel']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['estudiosOt']['label']; ?> 

@@ -11,14 +11,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class pedir_empleo  extends MY_Controller      
 {
-	private $cuil="";
+	public $cuil="inicial";
 	public function __construct()
 	{
 		parent::__construct();
+		$this->cuil="segundo";
 		$this->load->model('oficina_de_empleo/pedir_empleo_model');    
 		$this->load->model('personas_model');    
 		$this->grupos_permitidos = array('admin','oficina_empleo_general','oficina_empleo');
-		$this->grupos_solo_consulta = array('user');
+		$this->grupos_solo_consulta = array('user','tramites_online_publico');
 		
 		// Inicializaciones necesarias colocar acá.
 	}
@@ -60,8 +61,8 @@ class pedir_empleo  extends MY_Controller
 		{
 				$this->datatables
 				->select('cuil, nombre, capacitacion, busca_empleo, email, telefono, fecha_nac')
-				->where("pedir_emplo.cuil=($cuil)")      //esta linea es la que cambia
-				->from('pedir_empleo') 
+				->where("oe_cv.cuil=($cuil)")      //esta linea es la que cambia
+				->from('oe_cv') 
 				->add_column('ver', '<a href="oficina_de_empleo/pedir_empleo/ver/$1" title="Ver" class="btn btn-primary btn-xs"><i class="fa fa-search"></i></a>', 'id')  
 				->add_column('editar', '<a href="oficina_de_empleo/pedir_empleo/editar/$1" title="Editar" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>', 'id')  
 				->add_column('eliminar', '<a href="oficina_de_empleo/pedir_empleo/eliminar/$1" title="Eliminar" class="btn btn-primary btn-xs"><i class="fa fa-times"></i></a>', 'id');  
@@ -70,7 +71,7 @@ class pedir_empleo  extends MY_Controller
 		}else{
 		$this->datatables
 				->select('cuil, nombre, capacitacion, busca_empleo, email, telefono, fecha_nac')
-				->from('pedir_empleo') 
+				->from('oe_empleo') 
 			//	->join('personas', 'personas.cuil = pedir_empleo.cuil', 'inner')
 				->add_column('ver', '<a href="oficina_de_empleo/pedir_empleo/ver/$1" title="Ver" class="btn btn-primary btn-xs"><i class="fa fa-search"></i></a>', 'id')  
 				->add_column('editar', '<a href="oficina_de_empleo/pedir_empleo/editar/$1" title="Editar" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>', 'id')  
@@ -80,222 +81,82 @@ class pedir_empleo  extends MY_Controller
 		}
 	}
 	
-
-	public function agregar1()    //esta funcion es del boton que me da la funcion de agregar ,verifico si es usuario o admin y decido
-	{
-		if (!isset($cuil)) {		//si no es ingresado por el usuario este campo estara vacio
-			$agregar2=array($cuil="",true);
-		}
-
-		$this->set_model_validation_rules($this->personas_model);    //tengo que ver esto
-		$error_msg = FALSE;
-		if ($this->form_validation->run() === TRUE)
-		{
-
-			$cuil = $this->input->post('cuil');
-
-			//metodo inventado de yo para traer los datos de usuario
-			$match = array(
-				'select'=>('personas.cuil'), //"personas.cuil, personas.nombre, personas.apellido, personas.email, personas.telefono, personas.sexo, personas.fecha_nacimiento"
-                'from'=>('personas'),
-                'where'=>("personas.cuil=$cuil")
-			);
-			if(isset($match['cuil'])){
-			$agregar=array($cuil,false);		//ingresado por admin y no presente en base de datos de personas
-			}else{
-			$agregar=array($cuil,true);			//ingresado por admin y presente en bd
-			}
-
-//
-$this->load->model('oficina_de_empleo/pedir_empleo_model');  
-
-		$fake_model = new stdClass();
-		$fake_model->fields = array(
-				'desde' => array('label' => 'Fecha Desde', 'type' => 'date', 'required' => TRUE),
-				'hasta' => array('label' => 'Fecha Hasta', 'type' => 'date', 'required' => TRUE)
-		);
-
-		$this->set_model_validation_rules($fake_model);
-		$error_msg = NULL;
-		if ($this->form_validation->run() === TRUE)
-		{
-			$desde = DateTime::createFromFormat('d/m/Y', $this->input->post('desde'));
-			$hasta = DateTime::createFromFormat('d/m/Y', $this->input->post('hasta'));
-
-			$options['select'] = array(
-					"pedir_empleo.id as id", 
-					'pedir_empleo.n_orden', 
-					'pedir_empleo.padron', 
-					'pedir_empleo.agente', 
-					'pedir_empleo.n_nota', 
-					'pedir_empleo.fecha', 
-					'pedir_empleo.tipo', 
-					'pedir_empleo.estado', 
-					'pedir_empleo.inspeccion', 
-					'pedir_empleo.si_no', 
-					'pedir_empleo.cubierta_existente',
-					'pedir_empleo.pileta_existente', 
-					'pedir_empleo.cubierta_gis_existente', 
-					'pedir_empleo.pileta_gis_existente', 
-					'pedir_empleo.cubierta_gis_nueva', 
-					'pedir_empleo.pileta_gis_nueva', 
-					'pedir_empleo.cubierta_declarada', 
-					'pedir_empleo.pileta_declarada', 
-					'pedir_empleo.telefono_contacto', 
-					'pedir_empleo.observaciones', 
-			);
-		
-			$options['fecha >='] = $desde->format('Y-m-d');
-			$hasta->add(new DateInterval('P1D'));
-			$options['fecha <'] = $hasta->format('Y-m-d');
-
-			$options['sort_by'] = 'pedir_empleo.id'; 
-			$options['sort_direction'] = 'asc';
-			$options['return_array'] = TRUE;
-			$print_data = $this->pedir_empleo_model->get($options); 
-
-			if (!empty($print_data))
-			{
-				foreach ($print_data as $key => $value)
-				{
-					$print_data[$key][5] = date_format(new DateTime($value[5]), 'd-m-Y');
-					//  $print_data[$key]['vencimiento'] = date_format(new DateTime($value['vencimiento']), 'd-m-Y');
-				}
-
-				$spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-				$spreadsheet->getProperties()
-						->setCreator("SistemaMLC")
-						->setLastModifiedBy("SistemaMLC")
-						->setTitle("Informe de pedir_empleo Gis") 
-						->setDescription("Informe de pedir_empleo Gis"); 
-				$spreadsheet->setActiveSheetIndex(0);
-
-				$sheet = $spreadsheet->getActiveSheet();
-				$sheet->getParent()->getDefaultStyle()->getFont()->setSize(10);
-				$sheet->setTitle("Informe de pedir_empleo Gis"); 
-				$sheet->getColumnDimension('A')->setWidth(14);
-				$sheet->getColumnDimension('B')->setWidth(14);
-				$sheet->getColumnDimension('C')->setWidth(14);
-				$sheet->getColumnDimension('D')->setWidth(14);
-				$sheet->getColumnDimension('E')->setWidth(14);
-				$sheet->getColumnDimension('F')->setWidth(18);
-				$sheet->getColumnDimension('G')->setWidth(14);
-				$sheet->getColumnDimension('H')->setWidth(14);
-				$sheet->getColumnDimension('I')->setWidth(14);
-				$sheet->getColumnDimension('J')->setWidth(14);
-				$sheet->getColumnDimension('K')->setWidth(14);
-				$sheet->getColumnDimension('L')->setWidth(14);
-				$sheet->getColumnDimension('M')->setWidth(14);
-				$sheet->getColumnDimension('N')->setWidth(14);
-				$sheet->getColumnDimension('O')->setWidth(14);
-				$sheet->getColumnDimension('P')->setWidth(14);
-				$sheet->getColumnDimension('Q')->setWidth(14);
-				$sheet->getColumnDimension('R')->setWidth(14);
-				$sheet->getColumnDimension('S')->setWidth(14);
-				$sheet->getColumnDimension('T')->setWidth(100);
-
-				$sheet->getStyle('A1:T1')->getFont()->setBold(TRUE);
-				$sheet->fromArray(array(array(
-								'ID', 'N_Orden', 'Padron', 'Agente', 'N_Nota', 'Fecha',
-								'Tipo', 'Estado', 'Inspeccion', 'Correcion Capa',
-								'Cubierta Existente', 'Pileta Existente', 'Cubierta Gis Existente', 'Pileta Gis Existente',
-								'Cubierta Gis Nueva', 'Pileta Gis Nueva', 'Cubierta Declarada', 'Pileta Declarada',
-								'Telefono de Contacto', 'Observaciones'
-						)), NULL, 'A1');
-				$sheet->fromArray($print_data, NULL, 'A2');
-				$sheet->setAutoFilter('A1:T' . $sheet->getHighestRow());
-
-				$BStyle1 = array(
-						'borders' => array(
-								'left' => array(
-										'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM
-								)
-						)
-				);
-				$sheet->getStyle('U1:U' . (sizeof($print_data) + 1))->applyFromArray($BStyle1);
-
-				$BStyle2 = array(
-						'borders' => array(
-								'bottom' => array(
-										'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM
-								)
-						)
-				);
-				$sheet->getStyle('A' . (sizeof($print_data) + 1) . ':T' . (sizeof($print_data) + 1))->applyFromArray($BStyle2);
-
-				$nombreArchivo = 'Informepedir_empleo_' . date('Ymd'); 
-				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				header("Content-Disposition: attachment; filename=\"$nombreArchivo.xlsx\"");
-				header("Cache-Control: max-age=0");
-
-				$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-				$writer->save('php://output');
-				exit();
-			}
-			else
-			{
-				$error_msg = '<br />Sin datos para el periodo seleccionado';
-			}
-		}
-//
-			$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
-
-			$data['fields'] = $this->build_fields($fake_model->fields);
-			$data['txt_btn'] = 'Generar';
-			$data['title_view'] = 'Ingresar cuil';
-			$data['title'] = TITLE . ' - Informe de Turnos';
-		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_cuil', $data);   //tengo que crear unn  tamplate para esto*************************************
-		
-		};
-	}
-
 	public function agregar()    //esta funcion es del boton que me da la funcion de agregar 
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos))
+		if (!in_groups($this->grupos_permitidos, $this->grupos)&& !in_groups($this->grupos_solo_consulta, $this->grupos))
 		{
 			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
 		}
-
+		$this->cuil="66655555";
+		
 		if (in_groups($this->grupos_solo_consulta, $this->grupos))
 		{
-			$this->session->set_flashdata('error', 'Usuario sin permisos de edición');
-			redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh');  //(recl@mos_gis)//(recl@mos)
+			$this->set_cuil(($this->session->userdata('identity')));
+			$cuil2=$this->session->userdata('identity');
+			redirect('oficina_de_empleo/pedir_empleo/agregarC', 'refresh');
+			}else{
+				$cuil = array('cuil' => array('label' => 'DNI', 'type' => 'natural', 'minlength' => '7', 'maxlength' => '8', 'required' => TRUE) );
+			};
+		if ($_POST)
+			{	
+				$otra=$this->input->post('cuil');
+				$this->set_cuil($otra);
+
+				redirect('oficina_de_empleo/pedir_empleo/agregarC', 'refresh'); 
+			}
+		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
+$this->set_cuil("tia coca");
+	//	$this->pedir_empleo_model->fields['cuil']['value'] = $this->session->userdata('identity'); 
+
+		$data['fields'] = $this->build_fields($cuil); 
+		$data['txt_btn'] = 'Continuar';
+		$data['title_view'] = 'Cargar curriculum';
+		$data['title'] = TITLE . ' - CV';
+		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_cuil', $data); 
+	}
+
+	public function agregarC()    //esta funcion es del boton que me da la funcion de agregar 
+	{
+		if (!in_groups($this->grupos_permitidos, $this->grupos)&& !in_groups($this->grupos_solo_consulta, $this->grupos))
+		{
+			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
 		}
+		$this->array_genero_control = $this->pedir_empleo_model->get_genero(); 			//*******esto valida los combos en my_controler**********
+		$this->array_capacitacion_control = $this->pedir_empleo_model->get_si_no();		
+		$this->array_busca_empleo_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_nivel_control = $this->pedir_empleo_model->get_nivel(); 
+		$this->array_freelance_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_teletrabajo_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_viajante_control = $this->pedir_empleo_model->get_si_no();
+		$this->array_cama_adentro_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_casero_control = $this->pedir_empleo_model->get_si_no();
 
-//		$this->array_estado_control = $this->pedir_empleo_model->get_estados(); //(recl@mos)
-//		$this->array_tipo_control = $this->pedir_empleo_model->get_genero(); //(recl@mos)
-//		$this->array_inspeccion_control = $this->pedir_empleo_model->get_inspeccion(); //(recl@mos)
-//		$this->array_si_no_control = $this->pedir_empleo_model->get_si_no(); //(recl@mos)
-//		$this->array_si_no_control = $this->pedir_empleo_model->get_si_no(); //(recl@mos)
-		$this->array_capacitacion = $this->pedir_empleo_model->get_si_no();
-		$this->array_trabajo = $this->pedir_empleo_model->get_si_no(); 
-		$this->array_freelance = $this->pedir_empleo_model->get_si_no(); 
-		$this->array_teletrabajo = $this->pedir_empleo_model->get_si_no(); 
-		$this->array_viajante = $this->pedir_empleo_model->get_si_no();
-		$this->array_cama_adentro = $this->pedir_empleo_model->get_si_no(); 
-		$this->array_casero = $this->pedir_empleo_model->get_si_no();
-
-		$this->set_model_validation_rules($this->pedir_empleo_model); //(recl@mos)
+		$this->set_model_validation_rules($this->pedir_empleo_model); 
 		$error_msg = FALSE;
 		if ($this->form_validation->run() === TRUE)
 		{
 
-			$n_orden = $this->get_last_id_n_orden();//esto mepa que no va
-			$fecha = Date::createFromFormat('d/m/Y', $this->input->post('fecha'));
-			$cuil = $this->session->userdata('id') ;
+		//	$n_orden = $this->get_last_id_n_orden();//esto mepa que no va
+			$fecha = DateTime::createFromFormat('d/m/Y', $this->input->post('fecha_nac'));
+			$cuil = $this->cuil ;
 			$nombre = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido');
 		//	$telefono = $this->session->userdata('nombre');
-			$email = $this->session->userdata('email') ;
-
+		//	$email = $this->session->userdata('email') ;
+		
+		if (in_groups($this->grupos_solo_consulta, $this->grupos))
+		{
+			$this->session->set_flashdata('error', 'Usuario sin permisos de edición');
+			redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh'); 
+		}
 			$this->db->trans_begin();
 			$trans_ok = TRUE;
-			$trans_ok &= $this->pedir_empleo_model->create(array(    //(recl@mos)
+			$trans_ok &= $this->pedir_empleo_model->create(array(  
 					'cuil' => $cuil,
 					'nombre' => $nombre,
-					'telefono'=> $telefono,
-					'email' => $email,
+					'telefono'=> $this->input->post('telefono'),
+					'email' => $this->input->post('email'),
 					'genero' => $this->input->post('genero'),
-					'fecha_nac' => $this->input->$fecha->format('Y-m-d'),
+					'fecha_nac' => $fecha->format('Y-m-d'),
 					'domicilio' => $this->input->post('domicilio'),
 					'distrito' => $this->input->post('distrito'),
 					'otro_tel' => $this->input->post('otro_tel'),
@@ -306,7 +167,8 @@ $this->load->model('oficina_de_empleo/pedir_empleo_model');
 					'movilidad' => $this->input->post('movilidad'),
 					'discapacidad' => $this->input->post('discapacidad'),
 					'cud' => $this->input->post('cud'),
-					'estudios' => $this->input->post('estudios'),
+					'nivel' => $this->input->post('nivel'),
+					'estudiosOt' => $this->input->post('estudios'),
 					'grado' => $this->input->post('grado'),
 					'idiomas' => $this->input->post('idiomas'),
 					'computacion' => $this->input->post('computacion'),
@@ -340,12 +202,17 @@ $this->load->model('oficina_de_empleo/pedir_empleo_model');
 		}
 		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
 
-		//$this->pedir_empleo_model->fields[8]['array'] = $this->pedir_empleo_model->get_estados(); //(recl@mos) //(recl@mos)
 		$this->pedir_empleo_model->fields['genero']['array'] = $this->pedir_empleo_model->get_genero(); //(recl@mos) //(recl@mos)
-	//	$this->pedir_empleo_model->fields['email']['value'] = $this->pedir_empleo_model->get_inspeccion(); //(recl@mos) //(recl@mos)
-		$this->pedir_empleo_model->fields['cuil']['value'] = $this->session->userdata('identity'); //(recl@mos) //(recl@mos)
+		$this->pedir_empleo_model->fields['cuil']['value'] = $this->cuil; //(recl@mos) //(recl@mos)
 		$this->pedir_empleo_model->fields['nombre']['value'] = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido'); //(recl@mos)
-		$this->pedir_empleo_model->fields['userdata'] = $this->session->userdata(); //(recl@mos)
+		$this->pedir_empleo_model->fields['nivel']['array'] = $this->pedir_empleo_model->get_nivel(); 
+		$this->pedir_empleo_model->fields['capacitacion']['array'] = $this->pedir_empleo_model->get_si_no();
+		$this->pedir_empleo_model->fields['busca_empleo']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['freelance']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['teletrabajo']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['viajante']['array'] = $this->pedir_empleo_model->get_si_no();
+		$this->pedir_empleo_model->fields['cama_adentro']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['casero']['array'] = $this->pedir_empleo_model->get_si_no();
 
 		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields); //(recl@mos)
 		$data['txt_btn'] = 'Agregar';
@@ -353,173 +220,6 @@ $this->load->model('oficina_de_empleo/pedir_empleo_model');
 		$data['title'] = TITLE . ' - CV';
 		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data); //(recl@mos) //(recl@mos_gis) //(recl@mos)
 	}
-
-	public function agregar2($agregar)    //esta funcion es del boton que me da la funcion de agregar ,verifico si es usuario o admin y decido
-	{
-		if($condi===true){
-	
-		}
-		
-		$this->array_genero = $this->pedir_empleo_model->get_genero(); 
-		$this->$array_si_no = $this->pedir_empleo_model->get_si_no();
-
-		$this->set_model_validation_rules($this->pedir_empleo_model);    //tengo que ver esto
-		$error_msg = FALSE;
-		if ($this->form_validation->run() === TRUE)
-		{
-
-		//	$n_orden = $this->get_last_id_n_orden();		//****************esto mepa que no va*******************
-			$fecha = Date::createFromFormat('d/m/Y', $this->input->post('fecha'));
-			$cuil = $this->session->userdata('user_id');
-			$nombre = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido');
-
-			//metodo inventado de yo para traer los datos de usuario
-			//if
-
-			$this->db->trans_begin();
-			$trans_ok = TRUE;
-			$trans_ok &= $this->pedir_empleo_model->create(array(    
-					'domicilio' => $this->input->post('domicilio'),
-					'distrito' => $this->input->post('distrito'),//
-					'capacitacion' => $this->input->post('capacitacion'),
-					'horario_cap' => $this->input->post('horario_cap'),
-					'intereses_cap' => $this->input->post('intereses_cap'),
-					'busca_empleo' => $this->input->post('busca_empleo'),
-					'movilidad' => $this->input->post('movilidad'),
-					'discapacidad' => $this->input->post('discapacidad'),
-					'cud' => $this->input->post('cud'),
-					'estudios' => $this->input->post('estudios'),
-					'grado' => $this->input->post('grado'),
-					'idiomas' => $this->input->post('idiomas'),
-					'computacion' => $this->input->post('computacion'),
-					'cursos' => $this->input->post('cursos'),
-					'experiencia' => $this->input->post('experiencia'),
-					'interes_lab' => $this->input->post('interes_lab'),
-					'disponib_lab' => $this->input->post('disponib_lab'),
-					'freelance' => $this->input->post('freelance'),
-					'teletrabajo' => $this->input->post('teletrabajo'),
-					'viajante' => $this->input->post('viajante'),
-					'cama_adentro' => $this->input->post('cama_adentro'),
-					'casero' => $this->input->post('casero'),
-					'aclaraciones' => $this->input->post('aclaracion'),
-				), FALSE);
-				
-			if ($this->db->trans_status() && $trans_ok)
-			{
-				$this->db->trans_commit();
-				$this->session->set_flashdata('message', $this->pedir_empleo_model->get_msg()); 
-				redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh');  
-			}
-			else
-			{
-				$this->db->trans_rollback();
-				$error_msg = '<br />Se ha producido un error con la base de datos.';
-				if ($this->pedir_empleo_model->get_error()) 
-				{
-					$error_msg .= $this->pedir_empleo_model->get_error(); 
-				}
-			}
-		}
-		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
-
-		$this->pedir_empleo_model->fields['si_no']['array'] = $this->pedir_empleo_model->get_si_no();  
-		$this->pedir_empleo_model->fields['genero']['array'] = $this->pedir_empleo_model->get_genero();  
-		$this->pedir_empleo_model->fields['email']['value'] = $this->pedir_empleo_model->get_inspeccion();  
-		$this->pedir_empleo_model->fields['cuil']['value'] = $this->pedir_empleo_model->get_si_no();  
-		$this->pedir_empleo_model->fields['nombre']['value'] = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido'); 
-		$this->pedir_empleo_model->fields['userdata'] = $this->session->userdata(); 
-
-		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields); 
-		$data['txt_btn'] = 'Agregar';
-		$data['title_view'] = 'Cargar curriculum';
-		$data['title'] = TITLE . ' - CV';
-		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data);   
-	}
-
-	public function agregar3()    //esta funcion es del boton que me da la funcion de agregar ,verifico si es usuario o admin y decido
-	{
-	
-		 if (isset($cuil))
-	 	{
-			$cuil="";
-			$nombre="";
-	 	};
-		$this->array_genero = $this->pedir_empleo_model->get_genero(); 
-		$this->$array_si_no = $this->pedir_empleo_model->get_si_no();
-
-		$this->set_model_validation_rules($this->pedir_empleo_model);    //tengo que ver esto
-		$error_msg = FALSE;
-		if ($this->form_validation->run() === TRUE)
-		{
-
-		//	$n_orden = $this->get_last_id_n_orden();		//****************esto mepa que no va*******************
-			$fecha = Date::createFromFormat('d/m/Y', $this->input->post('fecha'));
-			$cuil = $this->session->userdata('user_id');
-			$nombre = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido');
-
-			//metodo inventado de yo para traer los datos de usuario
-			//if
-
-			$this->db->trans_begin();
-			$trans_ok = TRUE;
-			$trans_ok &= $this->pedir_empleo_model->create(array(    
-					'domicilio' => $this->input->post('domicilio'),
-					'distrito' => $this->input->post('distrito'),//
-					'capacitacion' => $this->input->post('capacitacion'),
-					'horario_cap' => $this->input->post('horario_cap'),
-					'intereses_cap' => $this->input->post('intereses_cap'),
-					'busca_empleo' => $this->input->post('busca_empleo'),
-					'movilidad' => $this->input->post('movilidad'),
-					'discapacidad' => $this->input->post('discapacidad'),
-					'cud' => $this->input->post('cud'),
-					'estudios' => $this->input->post('estudios'),
-					'grado' => $this->input->post('grado'),
-					'idiomas' => $this->input->post('idiomas'),
-					'computacion' => $this->input->post('computacion'),
-					'cursos' => $this->input->post('cursos'),
-					'experiencia' => $this->input->post('experiencia'),
-					'interes_lab' => $this->input->post('interes_lab'),
-					'disponib_lab' => $this->input->post('disponib_lab'),
-					'freelance' => $this->input->post('freelance'),
-					'teletrabajo' => $this->input->post('teletrabajo'),
-					'viajante' => $this->input->post('viajante'),
-					'cama_adentro' => $this->input->post('cama_adentro'),
-					'casero' => $this->input->post('casero'),
-					'aclaraciones' => $this->input->post('aclaracion'),
-				), FALSE);
-				
-			if ($this->db->trans_status() && $trans_ok)
-			{
-				$this->db->trans_commit();
-				$this->session->set_flashdata('message', $this->pedir_empleo_model->get_msg()); 
-				redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh');  
-			}
-			else
-			{
-				$this->db->trans_rollback();
-				$error_msg = '<br />Se ha producido un error con la base de datos.';
-				if ($this->pedir_empleo_model->get_error()) 
-				{
-					$error_msg .= $this->pedir_empleo_model->get_error(); 
-				}
-			}
-		}
-		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
-
-		$this->pedir_empleo_model->fields['si_no']['array'] = $this->pedir_empleo_model->get_si_no();  
-		$this->pedir_empleo_model->fields['genero']['array'] = $this->pedir_empleo_model->get_genero();  
-		$this->pedir_empleo_model->fields['email']['value'] = $this->pedir_empleo_model->get_inspeccion();  
-		$this->pedir_empleo_model->fields['cuil']['value'] = $this->pedir_empleo_model->get_si_no();  
-		$this->pedir_empleo_model->fields['nombre']['value'] = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido'); 
-		$this->pedir_empleo_model->fields['userdata'] = $this->session->userdata(); 
-
-		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields); 
-		$data['txt_btn'] = 'Agregar';
-		$data['title_view'] = 'Cargar curriculum';
-		$data['title'] = TITLE . ' - CV';
-		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data);   
-	}
-
 
 
 
@@ -579,7 +279,7 @@ $this->load->model('oficina_de_empleo/pedir_empleo_model');
 						'discapacidad' => $this->input->post('discapacidad'),								//discapacidad
 						'cud' => $this->input->post('cud'),										//nombre del archivo de imagen
 						
-						'nivel_estudio' => $this->input->post('nivel_estudio'),		//nivel de estudios 
+						'nivel' => $this->input->post('nivel'),		//nivel de estudios 
 						'estudiosOt' => $this->input->post('estudioOt'),
 						'grado' => $this->input->post('grado'),							//otros estudios
 		
@@ -881,4 +581,16 @@ $this->load->model('oficina_de_empleo/pedir_empleo_model');
 		$data['title'] = TITLE . ' - Informe de Turnos';
 		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_exportar', $data);   
 	}
+
+	public function set_cuil($cuil)
+	{
+		$this->cuil = $cuil;
+	//	return $this;
+	}
+
+	public function get_cuil()
+	{
+		return $this->cuil;
+	}
+
 }

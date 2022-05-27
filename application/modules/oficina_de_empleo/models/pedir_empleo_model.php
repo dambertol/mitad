@@ -29,23 +29,27 @@ class pedir_empleo_model extends MY_Model
 			'nobi' => 'no binario',
 			'trans' => 'trans'
 	);
-	private $array_inspeccion = array(  //esta puede ser reemplazada
-			'SI' => 'SI',
-			'NO' => 'NO'
+	private $array_nivel = array(  
+			'primario incom'=>'primario incom',
+			'pimario'=>'pimario',
+			'secundario incom'=>'secundario incom',
+			'secundario'=>'secundario',
+			'terciario incom'=>'terciario incom',
+			'terciario'=>'terciario',
+			'posgrado'=>'posgrado',
 	);
 	private $array_si_no = array(
-			'SI' => 'SI',
-			'NO' => 'NO'
+			true => 'SI',
+			false => 'NO'
 	);
 
 	public function __construct()
 	{
 		parent::__construct();
-		$this->table_name = 'pedir_empleo'; 				//nombre de la tabla de la base de datos
+		$this->table_name = 'oe_cv'; 				//nombre de la tabla de la base de datos
 		$this->full_log = TRUE;
 		$this->msg_name = 'base de datos de curriculum';
 		$this->id_name = 'cuil';
-	//	$this->columnas = array('id', 'padron', 'agente', 'tipo', 'estado', 'inspeccion', 'cubierta_existente', 'pileta_existente', 'cubierta_gis_existente', 'pileta_gis_existente', 'cubierta_gis_nueva', 'pileta_gis_nueva', 'cubierta_declarada', 'pileta_declarada', 'observaciones', 'n_nota', 'telefono_contacto', 'si_no', 'fecha', 'n_orden', 'audi_usuario', 'audi_fecha', 'audi_accion');
 		$this->columnas = array('cuil','genero','fecha_nac','domicilio','distrito','otro_cel','capacitacion','horario_cap','intereses_cap','busca_empleo','movilidad','discapacidad','cud','estuduio','grado','idiomas','computacion','cursos','experiencia','interes_lab','disponib_lab','freelance','teletrabajo','viajante','cama_adentro','casero','aclaraciones');
 		$this->fields = array(    //estos campos son del formulario propio*******************************************
 																														//estos datos son de otra base y no son editables
@@ -54,7 +58,7 @@ class pedir_empleo_model extends MY_Model
 				'telefono' => array('label' => 'Telefono', 'type' => 'integer', 'maxlength' => '14', 'required' => TRUE),    	//telefono
 				'email' => array('label' => 'email', 'maxlength' => '50', 'required' => TRUE ),								//correo electronico
 																													//estos campos son propios
-				'genero' => array('label' => 'Genero', 'input_type' => 'combo', 'id_name' => 'inspeccion', 'type' => 'bselect', 'required' => TRUE),			//genero
+				'genero' => array('label' => 'Genero', 'input_type' => 'combo', 'id_name' => 'genero', 'type' => 'bselect', 'required' => TRUE),			//genero
 				'fecha_nac' => array('label' => 'Fecha de nacimiento', 'type' => 'date', 'required' => TRUE),						//nacimiento
 				'domicilio' => array('label' => 'Domicilio', 'tipe'=>'varchar','maxlength' => '100', 'required'=> TRUE),			//domicilio
 				'distrito' => array('label' => 'Distrito', 'tipe'=>'varchar','maxlength' => '30', 'required'=> TRUE),			//distrito
@@ -72,7 +76,7 @@ class pedir_empleo_model extends MY_Model
 				'discapacidad' => array('label' => 'dicapacidad', 'type' => 'varchar', 'maxlength' => '50'),								//discapacidad
 				'cud' => array('label' => 'CUD', 'type' => 'varchar', 'maxlength' => '30'),										//nombre del archivo de imagen
 				
-				'nivel_estudio' => array('label' => 'Nivel maximo de estudios alcanzado','input_type' => 'combo', 'id_name' => 'inspeccion', 'type' => 'bselect'),		//nivel de estudios 
+				'nivel' => array('label' => 'Nivel maximo de estudios alcanzado','input_type' => 'combo', 'id_name' => 'nivel', 'type' => 'bselect'),		//nivel de estudios 
 				'estudiosOt' => array('label' => 'titulo secundario', 'type' => 'varchar', 'maxlength' => '50'),
 				'grado' => array('label' => 'estudios de grado', 'type' => 'varchar', 'maxlength' => '50'),							//otros estudios
 
@@ -86,11 +90,11 @@ class pedir_empleo_model extends MY_Model
 				'experiencia' => array('label' => 'experiencia laboral', 'type' => 'varchar', 'maxlength' => '300'),				//rubro-puesto-duracion-personal a cargo s/n
 				'interes_lab' => array('label' => 'interes laboral', 'type' => 'varchar', 'maxlength' => '100'),								//campo rellenable
 				'disponib_lab' => array('label' => 'disponibilidad horaria', 'type' => 'varchar', 'maxlength' => '100'),					//combo de oppp y rotativo s/n franquero s/n
-				'freelance' => array('label' => 'Freelance', 'input_type' => 'combo', 'id_name' => 'inspeccion', 'type' => 'bselect'),		//s/n
-				'teletrabajo' => array('label' => 'Teletrabajo', 'input_type' => 'combo', 'id_name' => 'inspeccion', 'type' => 'bselect'),		//sn
-				'viajante' => array('label' => 'Viajante', 'input_type' => 'combo', 'id_name' => 'inspeccion', 'type' => 'bselect'),		//sn
-				'cama_adentro' => array('label' => 'Cama adentro', 'input_type' => 'combo', 'id_name' => 'inspeccion', 'type' => 'bselect'),		//sn
-				'casero' => array('label' => 'Casero', 'input_type' => 'combo', 'id_name' => 'inspeccion', 'type' => 'bselect'),		//sn
+				'freelance' => array('label' => 'Freelance', 'input_type' => 'combo', 'id_name' => 'si_no', 'type' => 'bselect'),		//s/n
+				'teletrabajo' => array('label' => 'Teletrabajo', 'input_type' => 'combo', 'id_name' => 'si_no', 'type' => 'bselect'),		//sn
+				'viajante' => array('label' => 'Viajante', 'input_type' => 'combo', 'id_name' => 'si_no', 'type' => 'bselect'),		//sn
+				'cama_adentro' => array('label' => 'Cama adentro', 'input_type' => 'combo', 'id_name' => 'si_no', 'type' => 'bselect'),		//sn
+				'casero' => array('label' => 'Casero', 'input_type' => 'combo', 'id_name' => 'si_no', 'type' => 'bselect'),		//sn
 				'aclaraciones' => array('label' => 'Aclaraciones', 'form_type' => 'textarea', 'rows' => 5, 'maxlength' => '300')
 
 		);
@@ -120,9 +124,9 @@ class pedir_empleo_model extends MY_Model
 		return $this->array_genero;
 	}
 
-	function get_inspeccion()
+	function get_nivel()
 	{
-		return $this->array_inspeccion;
+		return $this->array_nivel;
 	}
 
 	function get_si_no()
