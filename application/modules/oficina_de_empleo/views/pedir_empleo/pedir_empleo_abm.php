@@ -42,7 +42,7 @@
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2><?php echo (!empty($title_view)) ? $title_view : 'dar_empleo'; ?></h2>
+                <h2><?php echo (!empty($title_view)) ? $title_view : 'pedir_empleo'; ?></h2>
                 <?php if (!empty($audi_modal)): ?>
                     <button type="button" class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#audi-modal">
                         <i class="fa fa-info-circle"></i>
@@ -58,12 +58,16 @@
 <!--  ********************************aca ocurre la magia **************** ************************-->
 
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['cuil']['label']; ?> 
-                                <?php echo $fields['cuil']['form']; ?> 
+                                <?php echo $fields['Dni']['label']; ?> 
+                                <?php echo $fields['Dni']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['nombre']['label']; ?> 
                                 <?php echo $fields['nombre']['form']; ?> 
+                    </div>
+                    <div class="change_col col-md-6 form-group">
+                                <?php echo $fields['apellido']['label']; ?> 
+                                <?php echo $fields['apellido']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['telefono']['label']; ?> 
@@ -90,9 +94,12 @@
                                 <?php echo $fields['distrito']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['otro_tel']['label']; ?> 
-                                <?php echo $fields['otro_tel']['form']; ?> 
+                                <?php echo $fields['otro_cel']['label']; ?> 
+                                <?php echo $fields['otro_cel']['form']; ?> 
                     </div>
+                    </div>
+                <div class="ln_solid"></div>
+                <div class="row">
                     <div class="border-group form-gruop">
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['capacitacion']['label']; ?> 
@@ -107,6 +114,9 @@
                                 <?php echo $fields['intereses_cap']['form']; ?> 
                     </div>
                     </div>
+                    </div>
+                <div class="ln_solid"></div>
+                <div class="row">
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['busca_empleo']['label']; ?> 
                                 <?php echo $fields['busca_empleo']['form']; ?> 
@@ -118,17 +128,21 @@
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['disponib_lab']['label']; ?> 
                                 <?php echo $fields['disponib_lab']['form']; ?> 
-                    </div>
+                    </div> </div>
+                <div class="ln_solid"></div>
+                <div class="row">
                     <div class="border-group form-gruop">
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['movil_tipo']['label']; ?> 
-                                <?php echo $fields['movil_tipo']['form']; ?> 
+                                <?php echo $fields['movilidad']['label']; ?> 
+                                <?php echo $fields['movilidad']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['movil_carnet']['label']; ?> 
                                 <?php echo $fields['movil_carnet']['form']; ?> 
                     </div>
-                    </div>
+                    </div> </div>
+                <div class="ln_solid"></div>
+                <div class="row">
                     <div class="border-group">
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['discapacidad']['label']; ?> 
@@ -138,10 +152,12 @@
                                 <?php echo $fields['cud']['label']; ?> 
                                 <?php echo $fields['cud']['form']; ?> 
                     </div>
-                    </div>
+                    </div> </div>
+                <div class="ln_solid"></div>
+                <div class="row">
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['nivel']['label']; ?> 
-                                <?php echo $fields['nivel']['form']; ?> 
+                                <?php echo $fields['estudio']['label']; ?> 
+                                <?php echo $fields['estudio']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['estudiosOt']['label']; ?> 
@@ -157,8 +173,8 @@
                                 <?php echo $fields['idiomas']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['idiomas_niv']['label']; ?> 
-                                <?php echo $fields['idiomas_niv']['form']; ?> 
+                                <?php //echo $fields['idiomas_niv']['label']; ?> 
+                                <?php //echo $fields['idiomas_niv']['form']; ?> 
                     </div>                    
                     </div>
                     <div class="change_col col-md-6 form-group">
@@ -166,8 +182,8 @@
                                 <?php echo $fields['computacion']['form']; ?> 
                     </div>                    
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['compu_niv']['label']; ?> 
-                                <?php echo $fields['compu_niv']['form']; ?> 
+                                <?php //echo $fields['compu_niv']['label']; ?> 
+                                <?php //echo $fields['compu_niv']['form']; ?> 
                     </div>
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['cursos']['label']; ?> 
@@ -197,11 +213,28 @@
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['casero']['label']; ?> 
                                 <?php echo $fields['casero']['form']; ?> 
+                    </div> 
+                </div>
+                <div class="ln_solid"></div>
+                <div class="row">
+                    <div class="change_col col-md-6 form-group">
+                                <?php //echo $fields['exmuni']['label']; ?> 
+                                <?php //echo $fields['exmuni']['form']; ?> 
                     </div>
+                    <div class="change_col col-md-6 form-group">
+                                <?php //echo $fields['famimuni']['label']; ?> 
+                                <?php //echo $fields['famimuni']['form']; ?> 
+                    </div> </div>
+                <div class="ln_solid"></div>
+                <div class="row">
                     <div class="group-border ">
                     <div class="change_col col-md-6 form-group">
                                 <?php echo $fields['aclaraciones']['label']; ?> 
                                 <?php echo $fields['aclaraciones']['form']; ?> 
+                    </div>
+                    <div class="change_col col-md-6 form-group">
+                                <?php //echo $fields['pdf']['label']; ?> 
+                                <?php //echo $fields['pdf']['form']; ?> 
                     </div>
                     </div>
 
@@ -209,8 +242,8 @@
                 <div class="ln_solid"></div>
                 <div class="text-center">
                     <?php echo (!empty($txt_btn)) ? form_submit($data_submit, $txt_btn) : ''; ?>
-                    <?php echo ($txt_btn === 'Editar' || $txt_btn === 'Eliminar') ? form_hidden('id', $empleo->id) : ''; ?>
-                    <a href="oficina_de_empleo/dar_empleo/listar" class="btn btn-default btn-sm">Cancelar</a> 
+                    <?php echo ($txt_btn === 'Editar' || $txt_btn === 'Eliminar') ? form_hidden('id', $empleo->Dni) : ''; ?>
+                    <a href="oficina_de_empleo/pedir_empleo/listar" class="btn btn-default btn-sm">Cancelar</a> 
                 </div>
                 <?php echo form_close(); ?>
             </div>
@@ -227,3 +260,7 @@
         $('.obs').find('div.col-sm-10').removeClass('col-sm-10').addClass('col-sm-12');
     });
 </script>
+<!--
+<div>
+    <input type="text">
+</div>

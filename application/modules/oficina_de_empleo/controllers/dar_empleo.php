@@ -21,7 +21,7 @@ class dar_empleo  extends MY_Controller      //
 		// Inicializaciones necesarias colocar acá.
 	}
 
-	public function listar()   //************esta funcion fija los datos a mostrar y la opcion de busqueda, debera mostrar nombre,cuil y cv, solo si tiene cv cargado */
+	public function listar()   //************esta funcion fija los datos a mostrar y la opcion de busqueda, debera mostrar nombre,Dni y cv, solo si tiene cv cargado */
 	{
 		if (!in_groups($this->grupos_permitidos, $this->grupos))
 		{
@@ -335,7 +335,7 @@ class dar_empleo  extends MY_Controller      //
 								'type' => 'LEFT',
 								'table' => 'personas',
 								'where' => 'personas.id = users.persona_id',
-								'columnas' => "CONCAT(personas.apellido, ', ', personas.nombre, ' (', personas.cuil, ')') as audi_usuario",
+								'columnas' => "CONCAT(personas.apellido, ', ', personas.nombre, ' (', personas.Dni, ')') as audi_usuario",
 						)
 				)
 		));

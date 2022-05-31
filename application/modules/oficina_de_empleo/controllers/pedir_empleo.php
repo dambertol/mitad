@@ -11,11 +11,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  */
 class pedir_empleo  extends MY_Controller      
 {
-	public $cuil="inicial";
 	public function __construct()
 	{
 		parent::__construct();
-		$this->cuil="segundo";
 		$this->load->model('oficina_de_empleo/pedir_empleo_model');    
 		$this->load->model('personas_model');    
 		$this->grupos_permitidos = array('admin','oficina_empleo_general','oficina_empleo');
@@ -24,12 +22,13 @@ class pedir_empleo  extends MY_Controller
 		// Inicializaciones necesarias colocar acá.
 	}
 
-	public function listar()   //************esta funcion fija los datos a mostrar y la opcion de busqueda, debera mostrar nombre,cuil y cv, solo si tiene cv cargado */
+	public function listar()   //************esta funcion fija los datos a mostrar y la opcion de busqueda, debera mostrar nombre,Dni y cv, solo si tiene cv cargado */
 	{
 		$tableData = array(					//esta tabla la usa el script curriculums_listar y la manda con el template para imprimir la lista en pantalla
 				'columns' => array(
-					array('label' => 'cuil', 'data' => 'cuil', 'width' => 10, 'class' => 'dt-body-right'),
-					array('label' => 'nombre y apellido', 'data' => 'nombre', 'width' => 16, 'class' => 'dt-body-right'),
+					array('label' => 'Dni', 'data' => 'Dni', 'width' => 10, 'class' => 'dt-body-right'),
+					array('label' => 'nombre', 'data' => 'nombre', 'width' => 16, 'class' => 'dt-body-right'),
+					array('label' => 'apellido', 'data' => 'apellido', 'width' => 16, 'class' => 'dt-body-right'),
 					array('label' => 'capacitacion', 'data' => 'capacitacion', 'width' => 10),
 					array('label' => 'empleo', 'data' => 'busca_empleo', 'width' => 10),
 					array('label' => 'email', 'data' => 'email', 'width' => 16),
@@ -39,10 +38,10 @@ class pedir_empleo  extends MY_Controller
 					array('label' => '', 'data' => 'editar', 'width' => 3, 'class' => 'dt-body-center', 'responsive_class' => 'all', 'sortable' => 'false', 'searchable' => 'false'),
 					array('label' => '', 'data' => 'eliminar', 'width' => 3, 'class' => 'dt-body-center', 'responsive_class' => 'all', 'sortable' => 'false', 'searchable' => 'false')
 			),
-				'source_url' => 'oficina_de_empleo/pedir_empleo/listar_data('.$this->session->userdata('user_id').')',
+				'source_url' => 'oficina_de_empleo/pedir_empleo/listar_data',
 				'table_id' => 'pedir_empleo_table', 
 				'reuse_var' => TRUE,
-				'initComplete' => "complete pedir_empleo_table", 
+				'initComplete' => "complete_pedir_empleo_table", 
 				'footer' => TRUE,
 				'dom' => 'rt<"row"<"col-sm-6"i><"col-sm-6"p>>'
 		);
@@ -50,128 +49,151 @@ class pedir_empleo  extends MY_Controller
 		$data['js_table'] = buildJS($tableData);
 		$data['error'] = $this->session->flashdata('error');
 		$data['message'] = $this->session->flashdata('message');
-		$data['title_view'] = 'Listado de pedir_empleo'; 
+		$data['title_view'] = 'Listado de registros'; 
 		$data['title'] = TITLE . ' - pedir_empleo'; 
 		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_listar', $data);   
 	}
 
 	public function listar_data()			//esto lo usa el metodo de arriba para traer los datos de tabla ->para admin
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos))
+		if (in_groups($this->grupos_permitidos, $this->grupos))
 		{
-				$this->datatables
-				->select('cuil, nombre, capacitacion, busca_empleo, email, telefono, fecha_nac')
-				->where("oe_cv.cuil=($cuil)")      //esta linea es la que cambia
+			$this->datatables
+				->select('Dni, nombre, apellido, capacitacion, busca_empleo, email, telefono, fecha_nac')
 				->from('oe_cv') 
-				->add_column('ver', '<a href="oficina_de_empleo/pedir_empleo/ver/$1" title="Ver" class="btn btn-primary btn-xs"><i class="fa fa-search"></i></a>', 'id')  
-				->add_column('editar', '<a href="oficina_de_empleo/pedir_empleo/editar/$1" title="Editar" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>', 'id')  
-				->add_column('eliminar', '<a href="oficina_de_empleo/pedir_empleo/eliminar/$1" title="Eliminar" class="btn btn-primary btn-xs"><i class="fa fa-times"></i></a>', 'id');  
-
+				->add_column('ver', '<a href="oficina_de_empleo/pedir_empleo/ver/$1" title="Ver" class="btn btn-primary btn-xs"><i class="fa fa-search"></i></a>', 'Dni')  
+				->add_column('editar', '<a href="oficina_de_empleo/pedir_empleo/editar/$1" title="Editar" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>', 'Dni')  
+				->add_column('eliminar', '<a href="oficina_de_empleo/pedir_empleo/eliminar/$1" title="Eliminar" class="btn btn-primary btn-xs"><i class="fa fa-times"></i></a>', 'Dni');  
 		echo $this->datatables->generate();
 		}else{
-		$this->datatables
-				->select('cuil, nombre, capacitacion, busca_empleo, email, telefono, fecha_nac')
-				->from('oe_empleo') 
-			//	->join('personas', 'personas.cuil = pedir_empleo.cuil', 'inner')
-				->add_column('ver', '<a href="oficina_de_empleo/pedir_empleo/ver/$1" title="Ver" class="btn btn-primary btn-xs"><i class="fa fa-search"></i></a>', 'id')  
-				->add_column('editar', '<a href="oficina_de_empleo/pedir_empleo/editar/$1" title="Editar" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>', 'id')  
-				->add_column('eliminar', '<a href="oficina_de_empleo/pedir_empleo/eliminar/$1" title="Eliminar" class="btn btn-primary btn-xs"><i class="fa fa-times"></i></a>', 'id');  
-
+			$identidad=$this->session->userdata('identity');
+			$this->datatables
+				->select('Dni, nombre, apellido, capacitacion, busca_empleo, email, telefono, fecha_nac')
+				->where("oe_cv.Dni=$identidad")      //esta linea es la que cambia
+				->from('oe_cv') 
+				->add_column('ver', '<a href="oficina_de_empleo/pedir_empleo/ver/$1" title="Ver" class="btn btn-primary btn-xs"><i class="fa fa-search"></i></a>', 'Dni')  
+				->add_column('editar', '<a href="oficina_de_empleo/pedir_empleo/editar/$1" title="Editar" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>', 'Dni')  
+				->add_column('eliminar', '<a href="oficina_de_empleo/pedir_empleo/eliminar/$1" title="Eliminar" class="btn btn-primary btn-xs"><i class="fa fa-times"></i></a>', 'Dni');  
 		echo $this->datatables->generate();
 		}
-	}
-	
-	public function agregar()    //esta funcion es del boton que me da la funcion de agregar 
-	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos)&& !in_groups($this->grupos_solo_consulta, $this->grupos))
-		{
-			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
-		}
-		$this->cuil="66655555";
 		
-		if (in_groups($this->grupos_solo_consulta, $this->grupos))
-		{
-			$this->set_cuil(($this->session->userdata('identity')));
-			$cuil2=$this->session->userdata('identity');
-			redirect('oficina_de_empleo/pedir_empleo/agregarC', 'refresh');
-			}else{
-				$cuil = array('cuil' => array('label' => 'DNI', 'type' => 'natural', 'minlength' => '7', 'maxlength' => '8', 'required' => TRUE) );
-			};
-		if ($_POST)
+	}
+
+	public function agregar()    //esta funcion es del boton que me da la funcion de agregar 
+	{  
+			if ($_POST || in_groups($this->grupos_solo_consulta,$this->grupos))		//primer condicion de saltarse primer formulario
 			{	
-				$otra=$this->input->post('cuil');
-				$this->set_cuil($otra);
-
-				redirect('oficina_de_empleo/pedir_empleo/agregarC', 'refresh'); 
+				if (!$_POST && in_grups($this->grupos_solo_consulta,$this->grupos)) 		//condicion de que sea vecino y recien inicie
+				{		
+					$Dni=$this->session->userdata('identity');
+					$this->agregarC($Dni);												//condicion de admin que haya enviado primer formulario
+				}elseif($_POST && !$this->input->post('genero')){
+					$Dni=($this->input->post('Dni'));
+					$this->agregarC($Dni);
+					//	redirect('oficina_de_empleo/pedir_empleo/agregarC', 'refresh'); 
+			}else{					
+				$Dni=($this->input->post('Dni'));			//condicion de recepcion de segundo formulario
+				$this->agregarC($Dni);
 			}
+			}else{																			//si no cumple lo anterior ser envia el primer formulario de Dni
+		$Dni2 = array('Dni' => array('label' => 'DNI', 'type' => 'natural', 'minlength' => '7', 'maxlength' => '8', 'required' => TRUE) );
 		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
-$this->set_cuil("tia coca");
-	//	$this->pedir_empleo_model->fields['cuil']['value'] = $this->session->userdata('identity'); 
 
-		$data['fields'] = $this->build_fields($cuil); 
+	//	$this->pedir_empleo_model->fields['Dni']['value'] = $this->session->userdata('identity'); 
+
+		$data['fields'] = $this->build_fields($Dni2); 
 		$data['txt_btn'] = 'Continuar';
 		$data['title_view'] = 'Cargar curriculum';
 		$data['title'] = TITLE . ' - CV';
-		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_cuil', $data); 
+		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_Dni', $data); 
+			}
 	}
 
-	public function agregarC()    //esta funcion es del boton que me da la funcion de agregar 
+	public function agregarC($Dni)    //esta funcion es del boton que me da la funcion de agregar 
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos)&& !in_groups($this->grupos_solo_consulta, $this->grupos))
+		if (!in_groups($this->grupos_permitidos, $this->grupos))
 		{
-			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
+			$nombre=$this->session->userdata('nombre');
+			$apellido= $this->session->userdata('apellido');
+		}else{
+			$nombre =$this->input->post('nombre');
+			$apellido= $this->input->post('apellido');
+			if(isset($Dni)){
+				$Dni =$this->input->post('Dni');
+			}
 		}
+		$modoCarga='create';
+		$boton="Agregar";
+		
+		$empleo = $this->pedir_empleo_model->get(array('Dni' => $Dni)); //este metodo trae el cv
+		if (isset($empleo)||$empleo==null)
+		{
+			$persona = $this->personas_model->get(array('Dni' => $Dni)); 
+				if (!empty($persona)) //************con esto no estoy haciendo nada
+			{
+				$persona="";
+			}else{
+				$persona = $this->pedir_persona_model->get(array('Dni' => $Dni)); //este metodo trae el cv
+			}
+		}else{
+			$modoCarga='update';
+			$boton="Actualizar";
+		}
+
+
+
 		$this->array_genero_control = $this->pedir_empleo_model->get_genero(); 			//*******esto valida los combos en my_controler**********
+		$this->array_estudio_control = $this->pedir_empleo_model->get_estudio();
+		
 		$this->array_capacitacion_control = $this->pedir_empleo_model->get_si_no();		
-		$this->array_busca_empleo_control = $this->pedir_empleo_model->get_si_no(); 
-		$this->array_nivel_control = $this->pedir_empleo_model->get_nivel(); 
+		$this->array_busca_empleo_control = $this->pedir_empleo_model->get_si_no(); 	 
 		$this->array_freelance_control = $this->pedir_empleo_model->get_si_no(); 
 		$this->array_teletrabajo_control = $this->pedir_empleo_model->get_si_no(); 
 		$this->array_viajante_control = $this->pedir_empleo_model->get_si_no();
 		$this->array_cama_adentro_control = $this->pedir_empleo_model->get_si_no(); 
 		$this->array_casero_control = $this->pedir_empleo_model->get_si_no();
+	//	$this->array_exmuni_control = $this->pedir_empleo_model->get_si_no(); 
+	//	$this->array_famimuni_control = $this->pedir_empleo_model->get_si_no();
 
 		$this->set_model_validation_rules($this->pedir_empleo_model); 
 		$error_msg = FALSE;
 		if ($this->form_validation->run() === TRUE)
 		{
-
-		//	$n_orden = $this->get_last_id_n_orden();//esto mepa que no va
 			$fecha = DateTime::createFromFormat('d/m/Y', $this->input->post('fecha_nac'));
-			$cuil = $this->cuil ;
-			$nombre = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido');
-		//	$telefono = $this->session->userdata('nombre');
-		//	$email = $this->session->userdata('email') ;
-		
-		if (in_groups($this->grupos_solo_consulta, $this->grupos))
-		{
-			$this->session->set_flashdata('error', 'Usuario sin permisos de edición');
-			redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh'); 
-		}
+
+	
 			$this->db->trans_begin();
 			$trans_ok = TRUE;
-			$trans_ok &= $this->pedir_empleo_model->create(array(  
-					'cuil' => $cuil,
-					'nombre' => $nombre,
+			$trans_ok &= $this->pedir_empleo_model->$modoCarga(array( 	 //cambiar la palabra magica por update
+				//con estas anotaciones creo la base de datos
+				//CREATE TABLE `wi_dev`.`oe_cv`(`Dni` INT(11) PRIMARY KEY, `nombre` VARCHAR(30) NOT NULL, `apellido` VARCHAR(30) NOT NULL, `telefono` VARCHAR(30) NOT NULL, `email` VARCHAR(30) NOT NULL, `genero` VARCHAR(30) NOT NULL, `fecha_nac` date, `domicilio` VARCHAR(30) NOT NULL, `distrito` VARCHAR(30) NOT NULL, `otro_cel` int(15), `capacitacion` VARCHAR(30) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(30), `movilidad` VARCHAR(30), `movil_carnet` VARCHAR(30), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(30), `estudiosOt` VARCHAR(30),`grado` VARCHAR(30), `idiomas` VARCHAR(30), `computacion` VARCHAR(30), `cursos` VARCHAR(30), `experiencia` VARCHAR(30), `interes_lab` VARCHAR(30), `disponib_lab` VARCHAR(30), `freelance` varchar(30), `teletrabajo` varchar(30), `viajante` varchar(30), `cama_adentro` varchar(30), `casero` varchar(30), `aclaraciones` varchar(300),`cuil` int(11),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+				//INSERT INTO `oe_cv` (`Dni`, `nombre`, `apellido`, `telefono`, `email`, `genero`, `fecha_nac`, `domicilio`, `distrito`, `otro_cel`, `capacitacion`, `horario_cap`, `intereses_cap`, `busca_empleo`, `movilidad`, `movil_carnet`, `discapacidad`, `cud`, `estudio`, `estudiosOt`, `grado`, `idiomas`, `computacion`, `cursos`, `experiencia`, `interes_lab`, `disponib_lab`, `freelance`, `teletrabajo`, `viajante`, `cama_adentro`, `casero`, `aclaraciones`, `cuil`, `audi_usuario`, `audi_fecha`, `audi_accion`) VALUES ('12345678', 'munilu', 'jan', '45613000', 'munilu@ya.com', 'femenino', '2022-05-09', 'siempre viva sn', 'lujan', '40013654', '0', 'noche', 'ACA VA ALGO\r\n\r\n', '0', 'moto', 'B1', 'lelepancha', NULL, 'una banda', 'otro mas', 'secundario', 'español', 'windouu', 'cartomancia', '100 años de existencia', 'no tengo', 'full', '0', '0', '0', '0', '0', 'el mejor municipio', '45613278', '', NULL, NULL);
+				//CREATE TABLE `wi_dev_aud`.`oe_cv`(`audi_id` INT AUTO_INCREMENT PRIMARY KEY,`Dni` INT(11) not null, `nombre` VARCHAR(30) NOT NULL, `apellido` VARCHAR(30) NOT NULL, `telefono` VARCHAR(30) NOT NULL, `email` VARCHAR(30) NOT NULL, `genero` VARCHAR(30) NOT NULL, `fecha_nac` date, `domicilio` VARCHAR(30) NOT NULL, `distrito` VARCHAR(30) NOT NULL, `otro_cel` int(15), `capacitacion` VARCHAR(30) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(30), `movilidad` VARCHAR(30), `movil_carnet` VARCHAR(30), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(30), `estudiosOt` VARCHAR(30), `grado` VARCHAR(30), `idiomas` VARCHAR(30), `computacion` VARCHAR(30), `cursos` VARCHAR(30), `experiencia` VARCHAR(30), `interes_lab` VARCHAR(30), `disponib_lab` VARCHAR(30), `freelance` varchar(30), `teletrabajo` varchar(30), `viajante` varchar(30), `cama_adentro` varchar(30), `casero` varchar(30), `aclaraciones` varchar(300),`cuil` int(11),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+					'Dni' => $Dni,
+					'nombre' => $this->input->post('nombre'),
+					'apellido'=>$this->input->post('apellido'),
 					'telefono'=> $this->input->post('telefono'),
 					'email' => $this->input->post('email'),
 					'genero' => $this->input->post('genero'),
 					'fecha_nac' => $fecha->format('Y-m-d'),
 					'domicilio' => $this->input->post('domicilio'),
 					'distrito' => $this->input->post('distrito'),
-					'otro_tel' => $this->input->post('otro_tel'),
+					'otro_cel' => $this->input->post('otro_cel'),
 					'capacitacion' => $this->input->post('capacitacion'),
 					'horario_cap' => $this->input->post('horario_cap'),
 					'intereses_cap' => $this->input->post('intereses_cap'),
 					'busca_empleo' => $this->input->post('busca_empleo'),
-					'movilidad' => $this->input->post('movilidad'),
+					'movilidad' => $this->input->post('movilidad'),		//a este lo tengo que cambiar
+					'movil_carnet' => $this->input->post('movil_tipo'),
 					'discapacidad' => $this->input->post('discapacidad'),
 					'cud' => $this->input->post('cud'),
-					'nivel' => $this->input->post('nivel'),
-					'estudiosOt' => $this->input->post('estudios'),
+					'estudio' => $this->input->post('estudio'),
+					'estudiosOt' => $this->input->post('estudiosOt'),
 					'grado' => $this->input->post('grado'),
 					'idiomas' => $this->input->post('idiomas'),
+					//'idiomas_niv' => $this->input->post('idiomas_niv'),
 					'computacion' => $this->input->post('computacion'),
+					//'compu_niv' => $this->input->post('compu_niv'),
 					'cursos' => $this->input->post('cursos'),
 					'experiencia' => $this->input->post('experiencia'),
 					'interes_lab' => $this->input->post('interes_lab'),
@@ -181,31 +203,36 @@ $this->set_cuil("tia coca");
 					'viajante' => $this->input->post('viajante'),
 					'cama_adentro' => $this->input->post('cama_adentro'),
 					'casero' => $this->input->post('casero'),
-					'aclaraciones' => $this->input->post('aclaracion'),
+				//	'exmuini' => $this->input->post('exmuni'),
+				//	'famimuni' => $this->input->post('famimuni'),
+					'aclaraciones' => $this->input->post('aclaraciones'),
+				//	'pdf' => $this->input->post('pdf'),
+
 				), FALSE);
 				
 			if ($this->db->trans_status() && $trans_ok)
 			{
 				$this->db->trans_commit();
-				$this->session->set_flashdata('message', $this->pedir_empleo_model->get_msg()); //(recl@mos)
-				redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh'); //(recl@mos_gis) //(recl@mos)
+				$this->session->set_flashdata('message', $this->pedir_empleo_model->get_msg()); 
+				redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh'); 
 			}
 			else
 			{
 				$this->db->trans_rollback();
-				$error_msg = '<br />Se ha producido un error con la base de datos.';
-				if ($this->pedir_empleo_model->get_error()) //(recl@mos)
+				$error_msg = '<br />Se ha producido un error con laaaaa base de datos.'; // me esta saltando este error
+				if ($this->pedir_empleo_model->get_error()) 
 				{
-					$error_msg .= $this->pedir_empleo_model->get_error(); //(recl@mos)
+					$error_msg .= $this->pedir_empleo_model->get_error(); 
 				}
 			}
 		}
 		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
 
-		$this->pedir_empleo_model->fields['genero']['array'] = $this->pedir_empleo_model->get_genero(); //(recl@mos) //(recl@mos)
-		$this->pedir_empleo_model->fields['cuil']['value'] = $this->cuil; //(recl@mos) //(recl@mos)
-		$this->pedir_empleo_model->fields['nombre']['value'] = $this->session->userdata('nombre') . " " . $this->session->userdata('apellido'); //(recl@mos)
-		$this->pedir_empleo_model->fields['nivel']['array'] = $this->pedir_empleo_model->get_nivel(); 
+		$this->pedir_empleo_model->fields['genero']['array'] = $this->pedir_empleo_model->get_genero();
+		$this->pedir_empleo_model->fields['Dni']['value'] = $Dni; 
+		$this->pedir_empleo_model->fields['nombre']['value'] =$nombre; 
+		$this->pedir_empleo_model->fields['apellido']['value'] =$apellido; 
+		$this->pedir_empleo_model->fields['estudio']['array'] = $this->pedir_empleo_model->get_estudio(); 
 		$this->pedir_empleo_model->fields['capacitacion']['array'] = $this->pedir_empleo_model->get_si_no();
 		$this->pedir_empleo_model->fields['busca_empleo']['array'] = $this->pedir_empleo_model->get_si_no(); 
 		$this->pedir_empleo_model->fields['freelance']['array'] = $this->pedir_empleo_model->get_si_no(); 
@@ -213,42 +240,48 @@ $this->set_cuil("tia coca");
 		$this->pedir_empleo_model->fields['viajante']['array'] = $this->pedir_empleo_model->get_si_no();
 		$this->pedir_empleo_model->fields['cama_adentro']['array'] = $this->pedir_empleo_model->get_si_no(); 
 		$this->pedir_empleo_model->fields['casero']['array'] = $this->pedir_empleo_model->get_si_no();
+	//	$this->pedir_empleo_model->fields['exmuni']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		//$this->pedir_empleo_model->fields['famimuni']['array'] = $this->pedir_empleo_model->get_si_no();
 
-		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields); //(recl@mos)
-		$data['txt_btn'] = 'Agregar';
+		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields);
+		$boton=='actualizar'?$data['empleo'] = $empleo:'';
+		$data['txt_btn'] = $boton;
 		$data['title_view'] = 'Cargar curriculum';
 		$data['title'] = TITLE . ' - CV';
-		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data); //(recl@mos) //(recl@mos_gis) //(recl@mos)
+		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data);
 	}
 
 
-
-
-
-
-
-
-
-	public function editar($id = NULL)
+	public function editar($dni = NULL) //esto lo redirecciono a agregarC, es el mismo metodo
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos) || $id == NULL || !ctype_digit($id)||!in_groups($this->grupos_solo_consulta, $this->grupos))
+		/*if (!in_groups($this->grupos_permitidos, $this->grupos) || $dni == NULL || !ctype_digit($dni)||!in_groups($this->grupos_solo_consulta, $this->grupos))
 		{
 			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
-		}
+		}*/
 
-		$empleo = $this->pedir_empleo_model->get(array('id' => $id)); 
+		$empleo = $this->pedir_empleo_model->get(array('Dni' => $dni)); 
 		if (empty($empleo))
 		{
 			show_error('No se encontró el curriculum', 500, 'Registro no encontrado');
 		}
+		$this->array_genero_control = $this->pedir_empleo_model->get_genero(); 			//*******esto valida los combos en my_controler**********
+		$this->array_estudio_control = $this->pedir_empleo_model->get_estudio();
 
-		$this->array_si_no_control = $this->pedir_si_no_model->get_si_no(); 
-		$this->array_genero_control = $this->pedir_empleo_model->get_genero(); 
+		$this->array_capacitacion_control = $this->pedir_empleo_model->get_si_no();		
+		$this->array_busca_empleo_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_freelance_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_teletrabajo_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_viajante_control = $this->pedir_empleo_model->get_si_no();
+		$this->array_cama_adentro_control = $this->pedir_empleo_model->get_si_no(); 
+		$this->array_casero_control = $this->pedir_empleo_model->get_si_no();
+	//	$this->array_exmuni_control = $this->pedir_empleo_model->get_si_no(); 
+	//	$this->array_famimuni_control = $this->pedir_empleo_model->get_si_no();
+
 
 		$this->set_model_validation_rules($this->pedir_empleo_model); 
 		if (isset($_POST) && !empty($_POST))
 		{
-			if ($id != $this->input->post('id'))
+			if ($dni != $this->input->post('Dni'))
 			{
 				show_error('Esta solicitud no pasó el control de seguridad.');
 			}
@@ -256,49 +289,51 @@ $this->set_cuil("tia coca");
 			$error_msg = FALSE;
 			if ($this->form_validation->run() === TRUE)
 			{
-				$fecha = DateTime::createFromFormat('d/m/Y H:i', $this->input->post('fecha'));
+				$fecha = DateTime::createFromFormat('d/m/Y', $this->input->post('fecha_nac'));
 
 				$this->db->trans_begin();
 				$trans_ok = TRUE;
 				$trans_ok &= $this->pedir_empleo_model->update(array( 
 																															//estos campos son propios
-						'genero' => $this->input->post('genero'),			//genero
-						'domicilio' => $this->input->post('domicilio'),			//domicilio
-						'distrito' => $this->input->post('distrito'),			//distrito
-						'otro_tel' => $this->input->post('otro_tel'),    	// otro telefono
-					
-						'capacitacion' => $this->input->post('capacitacion'),			//capacitacion sn
-						'horario_cap' => $this->input->post('horario_cap'),		//horarios disponbles		
-						'intereses_cap' => $this->input->post('intereses_cap'),					//intereses    ,por rubro
-						
-						'busca_empleo' => $this->input->post('busca_empleo'),		//busca trabajo ,s/n
-						
-						'movil_tipo' => $this->input->post('movil_tipo'),		//movilidad  tipo y categoria de carnet habilitante
-						'movil_carnet'	=> $this->input->post('movil_carnet'),		//movilidad  tipo y categoria de carnet habilitante
-						
-						'discapacidad' => $this->input->post('discapacidad'),								//discapacidad
-						'cud' => $this->input->post('cud'),										//nombre del archivo de imagen
-						
-						'nivel' => $this->input->post('nivel'),		//nivel de estudios 
-						'estudiosOt' => $this->input->post('estudioOt'),
-						'grado' => $this->input->post('grado'),							//otros estudios
-		
-						'idiomas' => $this->input->post('idiomas'),							//idioma y nivel del 1-5
-						'idiomas_niv' => $this->input->post('idiomas_niv'),							//idioma y nivel del 1-5
-		
-						'computacion' => $this->input->post('computacion'),				//programa y nivel del 1-5
-						'compu_niv' => $this->input->post('compu_niv'),				//programa y nivel del 1-5
-		
-						'cursos' => $this->input->post('cursos'),				//otros cursos
-						'experiencia' => $this->input->post('experiencias'),				//rubro-puesto-duracion-personal a cargo s/n
-						'interes_lab' => $this->input->post('interes_lab'),								//campo rellenable
-						'disponib_lab' => $this->input->post('disponib_lab'),					//combo de oppp y rotativo s/n franquero s/n
-						'freelance' => $this->input->post('freelance'),		//s/n
-						'teletrabajo' => $this->input->post('teletrabajo'),		//sn
-						'viajante' => $this->input->post('viajante'),		//sn
-						'cama_adentro' => $this->input->post('cama_adentro'),		//sn
-						'casero' => $this->input->post('casero'),		//sn
-						'aclaraciones' => $this->input->post('aclaraciones')
+					'Dni' => $dni,			
+					'nombre' => $this->input->post('nombre'),
+					'apellido'=>$this->input->post('apellido'),
+					'telefono'=> $this->input->post('telefono'),
+					'email' => $this->input->post('email'),
+					'genero' => $this->input->post('genero'),
+					'fecha_nac' => $fecha->format('Y-m-d'),
+					'domicilio' => $this->input->post('domicilio'),
+					'distrito' => $this->input->post('distrito'),
+					'otro_cel' => $this->input->post('otro_cel'),
+					'capacitacion' => $this->input->post('capacitacion'),
+					'horario_cap' => $this->input->post('horario_cap'),
+					'intereses_cap' => $this->input->post('intereses_cap'),
+					'busca_empleo' => $this->input->post('busca_empleo'),
+					'movilidad' => $this->input->post('movilidad'),//a este lo tengo que cambiar
+					'movil_carnet' => $this->input->post('movil_tipo'),
+					'discapacidad' => $this->input->post('discapacidad'),
+					'cud' => $this->input->post('cud'),
+					'estudio' => $this->input->post('estudio'),
+					'estudiosOt' => $this->input->post('estudiosOt'),
+					'grado' => $this->input->post('grado'),
+					'idiomas' => $this->input->post('idiomas'),
+					//'idiomas_niv' => $this->input->post('idiomas_niv'),
+					'computacion' => $this->input->post('computacion'),
+					//'compu_niv' => $this->input->post('compu_niv'),
+					'cursos' => $this->input->post('cursos'),
+					'experiencia' => $this->input->post('experiencia'),
+					'interes_lab' => $this->input->post('interes_lab'),
+					'disponib_lab' => $this->input->post('disponib_lab'),
+					'freelance' => $this->input->post('freelance'),
+					'teletrabajo' => $this->input->post('teletrabajo'),
+					'viajante' => $this->input->post('viajante'),
+					'cama_adentro' => $this->input->post('cama_adentro'),
+					'casero' => $this->input->post('casero'),
+				//	'exmuni' => $this->input->post('exmuni'),
+				//	'famimuni' => $this->input->post('famimuni'),
+					'aclaraciones' => $this->input->post('aclaracion'),
+					//'pdf' => $this->input->post('pdf'),  //tengo 	ue hace r el manejo de esta porqueria
+
 						), FALSE);
 
 				if ($this->db->trans_status() && $trans_ok)
@@ -320,47 +355,49 @@ $this->set_cuil("tia coca");
 		}
 		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
 
-		$this->pedir_empleo_model->fields['si_no']['array'] = $this->pedir_empleo_model->get_si_no();  
-		$this->pedir_empleo_model->fields['genero']['array'] = $this->pedir_empleo_model->get_genero();  
+		$this->pedir_empleo_model->fields['genero']['array'] = $this->pedir_empleo_model->get_genero(); 
+		$this->pedir_empleo_model->fields['estudio']['array'] = $this->pedir_empleo_model->get_estudio(); 
+		$this->pedir_empleo_model->fields['capacitacion']['array'] = $this->pedir_empleo_model->get_si_no();
+		$this->pedir_empleo_model->fields['busca_empleo']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['freelance']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['teletrabajo']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['viajante']['array'] = $this->pedir_empleo_model->get_si_no();
+		$this->pedir_empleo_model->fields['cama_adentro']['array'] = $this->pedir_empleo_model->get_si_no(); 
+		$this->pedir_empleo_model->fields['casero']['array'] = $this->pedir_empleo_model->get_si_no();
+	//	$this->pedir_empleo_model->fields['exmuni']['array'] = $this->pedir_empleo_model->get_si_no(); 
+	//	$this->pedir_empleo_model->fields['famimuni']['array'] = $this->pedir_empleo_model->get_si_no();
+
 
 		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields, $empleo); 
-		$data['curriculum'] = $empleo;
+		$data['empleo'] = $empleo;
 		$data['txt_btn'] = 'Editar';
 		$data['title_view'] = 'Editar curriculum';
 		$data['title'] = TITLE . ' - Editar curriculum';
 		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data);   
 	}
 
-	public function eliminar($id = NULL)
+	public function eliminar($dni = NULL)
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos) || $id == NULL || !ctype_digit($id))
-		{
-			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
-		}
-
-		if (in_groups($this->grupos_solo_consulta, $this->grupos))
-		{
-			$this->session->set_flashdata('error', 'Usuario sin permisos de edición');
-			redirect("oficina_de_empleo/pedir_empleo/ver/$id", 'refresh');  
-		}
-
-		$empleo = $this->pedir_empleo_model->get(array('id' => $id)); 
+		$empleo = $this->pedir_empleo_model->get(array('Dni' => $dni)); 
 		if (empty($empleo))
 		{
 			show_error('No se encontró el curriculum', 500, 'Registro no encontrado');
 		}
-
 		$error_msg = FALSE;
 		if (isset($_POST) && !empty($_POST))
 		{
-			if ($id != $this->input->post('id'))
+			if ($dni != $this->input->post('Dni')) //este control de seguridad  lo puedo saltar
 			{
-				show_error('Esta solicitud no pasó el control de seguridad.');
+				$id2=$this->input->post('Dni');
+//$PO= foreach($_POST as $key => $value) {
+//	print_r ($key . $value);
+//}
+				show_error('Esta solicitud no pasó el control de seguridad.'. $PO);
 			}
 
 			$this->db->trans_begin();
 			$trans_ok = TRUE;
-			$trans_ok &= $this->pedir_empleo_model->delete(array('id' => $this->input->post('id'))); 
+		$trans_ok &= $this->pedir_empleo_model->delete(array('Dni' => $dni/*$this->input->post('Dni')*/)); 
 			if ($this->db->trans_status() && $trans_ok)
 			{
 				$this->db->trans_commit();
@@ -378,38 +415,22 @@ $this->set_cuil("tia coca");
 			}
 		}
 		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
-
 		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields, $empleo, TRUE); 
-		$data['curriculum'] = $empleo;
+		$data['empleo'] = $empleo;
 		$data['txt_btn'] = 'Eliminar';
 		$data['title_view'] = 'Eliminar curriculum';
 		$data['title'] = TITLE . ' - Eliminar curriculum';
 		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data);   
 	}
 
-	public function ver($id = NULL)
+	public function ver($dni = NULL)
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos) || $id == NULL || !ctype_digit($id))
+		if (!in_groups($this->grupos_permitidos, $this->grupos) || $dni == NULL || !ctype_digit($dni))
 		{
 			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
 		}
-
 		$empleo = $this->pedir_empleo_model->get(array(   
-				'id' => $id,
-				'join' => array(
-						array(
-								'type' => 'LEFT',
-								'table' => 'users',
-								'where' => 'users.id = pedir_empleo.audi_usuario' 
-						),
-						array(
-								'type' => 'LEFT',
-								'table' => 'personas',
-								'where' => 'personas.id = users.persona_id',
-								'columnas' => "CONCAT(personas.apellido, ', ', personas.nombre, ' (', personas.cuil, ')') as audi_usuario",
-						)
-				)
-		));
+				'Dni' => $dni));
 		if (empty($empleo))
 		{
 			show_error('No se encontró el curriculum', 500, 'Registro no encontrado');
@@ -419,13 +440,13 @@ $this->set_cuil("tia coca");
 		$data['audi_modal'] = audi_modal($empleo);
 
 		$data['fields'] = $this->build_fields($this->pedir_empleo_model->fields, $empleo, TRUE); 
-		$data['curriculum'] = $empleo;
+		$data['empleo'] = $empleo;
 		$data['txt_btn'] = NULL;
 		$data['title_view'] = 'Ver curriculum';
 		$data['title'] = TITLE . ' - Ver curriculum';
 		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_abm', $data);   
 	}
-
+/*
 	public function exportar()
 	{
 		if (!in_groups($this->grupos_permitidos, $this->grupos))
@@ -481,6 +502,7 @@ $this->set_cuil("tia coca");
 			  $options['where'] = array($where);
 			  //$options['where'][] = $where;
 			 */
+			/*
 			$options['fecha >='] = $desde->format('Y-m-d');
 			$hasta->add(new DateInterval('P1D'));
 			$options['fecha <'] = $hasta->format('Y-m-d');
@@ -582,15 +604,16 @@ $this->set_cuil("tia coca");
 		$this->load_template('oficina_de_empleo/pedir_empleo/pedir_empleo_exportar', $data);   
 	}
 
-	public function set_cuil($cuil)
+	public function set_Dni($Dni)
 	{
-		$this->cuil = $cuil;
+		$this->Dni = $Dni;
 	//	return $this;
 	}
 
-	public function get_cuil()
+	public function get_Dni()
 	{
-		return $this->cuil;
+		return $this->Dni;
 	}
-
+*/
+	
 }

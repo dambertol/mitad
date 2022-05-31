@@ -8,7 +8,7 @@
 -->
 <script>
 	var pedir_empleo_table; 
-	function completepedir_empleo table() {
+	function complete_pedir_empleo_table() {
 		$('#pedir_empleo_table tfoot th').each(function(i) { 
 			var clase = '';
 			var tdclass = $('#pedir_empleo_table thead th').eq(i)[0]['attributes']['class']['value']; 
@@ -19,7 +19,7 @@
 			var indice = $('#pedir_empleo_table thead th').eq(i).index(); 
 			if (title !== '') {
 				if (indice === 6) { // Fecha
-					$(this).html('<div style="position:relative;"><input class="form-control input-xs dateFilter' + clase + '" id="dateFilter' + i + '" style="width: 100%;" type="text" placeholder="' + title + '" value="' + moment(pedir_empleo _table.column(i).search()).format("DD/MM/YYYY") + '"/></div>');
+					$(this).html('<div style="position:relative;"><input class="form-control input-xs dateFilter' + clase + '" id="dateFilter' + i + '" style="width: 100%;" type="text" placeholder="' + title + '" value="' + moment(pedir_empleo_table.column(i).search()).format("DD/MM/YYYY") + '"/></div>');
 				} else {
 					$(this).html('<input class="form-control input-xs' + clase + '" style="width: 100%;" type="text" placeholder="' + title + '" value="' + pedir_empleo_table.column(i).search() + '"/>'); 
 				}
@@ -89,7 +89,7 @@
 			<div class="x_title">
 				<h2><?php echo (!empty($title_view)) ? $title_view : 'pedir_empleo'; ?></h2> 
 				<?php echo anchor('oficina_de_empleo/pedir_empleo/agregar', 'Crear curriculum', 'class="btn btn-primary btn-sm"') ?>  
-				<?php echo anchor('oficina_de_empleo/pedir_empleo/exportar', 'Exportar Datos', 'class="btn btn-primary btn-sm"') ?>  
+				<?php //echo anchor('oficina_de_empleo/pedir_empleo/exportar', 'Exportar Datos', 'class="btn btn-primary btn-sm"') ?>  
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
