@@ -140,17 +140,24 @@ class pedir_empleo  extends MY_Controller
 			$this->editar($cuil);
 		}else{
 			
-$persona = $this->personas_model->get(array('cuil' => $cuil)); 
-				if (!empty($persona)) //************con esto no estoy haciendo nada
+$person = $this->personas_model->get(array('cuil' => $cuil)); 
+$persona=get_object_vars($person[0]);
+// $persona = $this->personas_model->get(array(
+// 	'select'=>array('cuil'),
+// 	'where'=>(array("personas.cuil=$cuil"))));
+
+
+
+				if (!empty($person)) 
 			{
-				echo '<script language="javascript">alert("persona encontrada con essssito");</script>';
+				echo '<script language="javascript">alert("persona encontrada con exito");</script>';
 
 				$nombre = $persona['nombre'];
 				$apellido=$persona['apellido'];
 				$telefono= $persona['telefono'];
 				$email = $persona['email'];
 				$genero = $persona['sexo'];
-				$fecha_nac =$persona['fecha_nacmiento'];
+				$fecha_nac =$persona['fecha_nacimiento'];
 			//	$domicilio = $persona['domicilio_id'];
 				$otro_cel = $persona['celular'];
 				$pers=true;
@@ -181,9 +188,9 @@ $persona = $this->personas_model->get(array('cuil' => $cuil));
 			$trans_ok = TRUE;
 			$trans_ok &= $this->pedir_empleo_model->create(array( 	 //cambiar la palabra magica por update
 				//con estas anotaciones creo la base de datos
-				//CREATE TABLE `wi_dev`.`oe_cv`(`cuil` BIGINT(12) PRIMARY KEY,`Dni` INT(9) not null,`user_id` BIGINT(12) not null, `nombre` VARCHAR(30) NOT NULL, `apellido` VARCHAR(30) NOT NULL, `telefono` BIGINT(15) NOT NULL, `email` VARCHAR(30) NOT NULL, `genero` VARCHAR(10) NOT NULL, `fecha_nac` date, `domicilio` VARCHAR(50) NOT NULL, `distrito` VARCHAR(25) NOT NULL, `otro_cel` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(30),`grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100), `oficios` VARCHAR(60),`experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
-				//INSERT INTO `oe_cv` (`cuil`, `Dni`,`user_id`, `nombre`, `apellido`, `telefono`, `email`, `genero`, `fecha_nac`, `domicilio`, `distrito`, `otro_cel`, `capacitacion`, `horario_cap`, `intereses_cap`, `busca_empleo`, `condic`, `movilidad`, `movil_carnet`, `discapacidad`, `cud`, `estudio`, `estudiosOt`, `grado`, `gradoo`, `idiomas`, `computacion`, `cursos`, `oficios`, `experiencia`, `interes_lab`, `disponib_lab`, `exmuni`, `famimuni`, `aclaraciones`, `pdf`, `audi_usuario`, `audi_fecha`, `audi_accion`) VALUES ('231234567', '12345678','12000', 'munilu', 'jan', '45613456', 'munilu@ya.com', 'femenino', '2022-05-11', 'siempre viva sn', 'lujan', '45613654', 's', 'noche', 'ponele que algo, carpinteria', 'n', 'teletrabajo', 'moto', 'b1', 'lelepancha,visual', NULL, 'primario', 'tecnico elctricista', 'licenciatura', 'electricista', 'ingles 0 - frances 1', 'windouu 0 - eccel 1 - paint 3', 'no tengo idea que wea iba aca', 'pasa pelotas', 'aburrido como el diablo', 'ninguno pero en texto', 'noche, tarde', 's', 'n', NULL, NULL, '', NULL, NULL);
-				//CREATE TABLE `wi_dev_aud`.`oe_cv`(`audi_id` INT AUTO_INCREMENT PRIMARY KEY,`cuil` BIGINT(12) not null,`Dni` INT(9) not null,`user_id` BIGINT(12) not null, `nombre` VARCHAR(30) NOT NULL, `apellido` VARCHAR(30) NOT NULL, `telefono` BIGINT(15) NOT NULL, `email` VARCHAR(30) NOT NULL, `genero` VARCHAR(10) NOT NULL, `fecha_nac` date, `domicilio` VARCHAR(50) NOT NULL, `distrito` VARCHAR(25) NOT NULL, `otro_cel` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(40), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(30), `grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100),`oficios` VARCHAR(60), `experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+				//CREATE TABLE `wi_dev`.`oe_cv`(`cuil` BIGINT(12) PRIMARY KEY,`Dni` INT(9) not null,`persona_id` BIGINT(12) not null, `nombre` VARCHAR(30) NOT NULL, `apellido` VARCHAR(30) NOT NULL, `telefono` BIGINT(15) NOT NULL, `email` VARCHAR(30) NOT NULL, `genero` VARCHAR(10) NOT NULL, `fecha_nac` date, `domicilio` VARCHAR(50) NOT NULL, `distrito` VARCHAR(25) NOT NULL, `otro_cel` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(30),`grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100), `oficios` VARCHAR(60),`experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+				//INSERT INTO `oe_cv` (`cuil`, `Dni`,`persona_id`, `nombre`, `apellido`, `telefono`, `email`, `genero`, `fecha_nac`, `domicilio`, `distrito`, `otro_cel`, `capacitacion`, `horario_cap`, `intereses_cap`, `busca_empleo`, `condic`, `movilidad`, `movil_carnet`, `discapacidad`, `cud`, `estudio`, `estudiosOt`, `grado`, `gradoo`, `idiomas`, `computacion`, `cursos`, `oficios`, `experiencia`, `interes_lab`, `disponib_lab`, `exmuni`, `famimuni`, `aclaraciones`, `pdf`, `audi_usuario`, `audi_fecha`, `audi_accion`) VALUES ('231234567', '12345678','12000', 'munilu', 'jan', '45613456', 'munilu@ya.com', 'femenino', '2022-05-11', 'siempre viva sn', 'lujan', '45613654', 's', 'noche', 'ponele que algo, carpinteria', 'n', 'teletrabajo', 'moto', 'b1', 'lelepancha,visual', NULL, 'primario', 'tecnico elctricista', 'licenciatura', 'electricista', 'ingles 0 - frances 1', 'windouu 0 - eccel 1 - paint 3', 'no tengo idea que wea iba aca', 'pasa pelotas', 'aburrido como el diablo', 'ninguno pero en texto', 'noche, tarde', 's', 'n', NULL, NULL, '', NULL, NULL);
+				//CREATE TABLE `wi_dev_aud`.`oe_cv`(`audi_id` INT AUTO_INCREMENT PRIMARY KEY,`cuil` BIGINT(12) not null,`Dni` INT(9) not null,`persona_id` BIGINT(12) not null, `nombre` VARCHAR(30) NOT NULL, `apellido` VARCHAR(30) NOT NULL, `telefono` BIGINT(15) NOT NULL, `email` VARCHAR(30) NOT NULL, `genero` VARCHAR(10) NOT NULL, `fecha_nac` date, `domicilio` VARCHAR(50) NOT NULL, `distrito` VARCHAR(25) NOT NULL, `otro_cel` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(40), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(30), `grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100),`oficios` VARCHAR(60), `experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
 				'cuil'=> $cuil,
 				'Dni' => $this->input->post('Dni'),	
 				'nombre' => $nombre,//$this->input->post('nombre'),
@@ -262,7 +269,6 @@ $persona = $this->personas_model->get(array('cuil' => $cuil));
 
 	public function editar($cuil = NULL) //esto lo redirecciono a agregarC, es el mismo metodo
 	{
-	
 		//if (!in_groups($this->grupos_permitidos, $this->grupos) || $dni == NULL || !ctype_digit($dni)||!in_groups($this->grupos_solo_consulta, $this->grupos))
 	//	{
 	//		show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
