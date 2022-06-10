@@ -28,10 +28,6 @@ class pedir_empleo_model extends MY_Model
 			'terciario'=>'terciario',
 			'posgrado'=>'posgrado',
 	);
-	private $array_si_no = array(
-			true => 'SI',
-			false => 'NO',
-	);
 
 	public function __construct()
 	{
@@ -39,56 +35,55 @@ class pedir_empleo_model extends MY_Model
 		$this->table_name = 'oe_cv'; 				//nombre de la tabla de la base de datos
 		$this->full_log = TRUE;
 		$this->msg_name = 'base de datos de curriculum';
-		$this->id_name = 'Dni';
-	$this->columnas = array('Dni','nombre','apellido','telefono','email','genero','fecha_nac','domicilio','distrito','otro_cel','capacitacion','horario_cap','intereses_cap','busca_empleo','movilidad','movil_carnet','discapacidad','cud','estudio','estudiosOt','grado','idiomas','computacion','cursos','experiencia','interes_lab','disponib_lab','freelance','teletrabajo','viajante','cama_adentro','casero',/*'exmuni','famimuni',*/'aclaraciones',/*'pdf'*/);
+		$this->id_name = 'cuil';
+		$this->columnas = array('cuil','Dni','nombre','apellido','telefono','email','genero','fecha_nac','domicilio','distrito','otro_cel','capacitacion','horario_cap','intereses_cap','busca_empleo','condic','movilidad','movil_carnet','discapacidad','cud','estudio','estudiosOt','grado','gradoo','idiomas','computacion','cursos','oficios','experiencia','interes_lab','disponib_lab','exmuni','famimuni','aclaraciones','pdf');
 		$this->fields = array(    //estos campos son del formulario propio*******************************************
 																														//estos datos son de otra base y no son editables
-				'Dni' => array('label' => 'Dni', 'type' => 'integer', 'maxlength' => '11', 'disabled' => false),    		//Dni
-				'nombre' => array('label' => 'Nombres', 'type'=>'varchar', 'maxlength' => '30', 'required' => TRUE),			//nombre del usuario
-				'apellido' => array('label' => 'Apellido', 'type'=>'varchar', 'maxlength' => '30', 'required' => TRUE),			//nombre del usuario
-				'telefono' => array('label' => 'Telefono', 'type' => 'varchar', 'maxlength' => '30', 'required' => TRUE),    	//telefono
-				'email' => array('label' => 'email', 'type'=>'varchar', 'maxlength' => '30', 'required' => TRUE ),								//correo electronico
+				'cuil' => array('label' => 'Cuil', 'type' => 'text', 'maxlength' => '12', 'disabled' => false),    		//Dni
+				'Dni' => array('label' => 'Dni', 'type' => 'text', 'maxlength' => '9', 'disabled' => false),    		//Dni
+				'nombre' => array('label' => 'Nombres', 'type'=>'text', 'maxlength' => '30', 'required' => TRUE),			//nombre del usuario
+				'apellido' => array('label' => 'Apellido', 'type'=>'text', 'maxlength' => '30', 'required' => TRUE),			//nombre del usuario
+				'telefono' => array('label' => 'Telefono', 'type' => 'text', 'maxlength' => '15', 'required' => TRUE),    	//telefono
+				'email' => array('label' => 'email', 'type'=>'email', 'maxlength' => '30', 'required' => TRUE ),								//correo electronico
 																													//estos campos son propios
 				'genero' => array('label' => 'Genero', 'input_type' => 'combo', 'id_name' => 'genero', 'type' => 'bselect', 'required' => TRUE),			//genero
 				'fecha_nac' => array('label' => 'Fecha de nacimiento', 'type' => 'date', 'required' => TRUE),						//nacimiento
-				'domicilio' => array('label' => 'Domicilio', 'tipe'=>'varchar','maxlength' => '30', 'required'=> TRUE),			//domicilio
-				'distrito' => array('label' => 'Distrito', 'tipe'=>'varchar','maxlength' => '30', 'required'=> TRUE),			//distrito
-				'otro_cel' => array('label' => 'Otro Telefono', 'type' => 'integer', 'maxlength' => '15', 'required' => TRUE),    	// otro telefono
-				'capacitacion' => array('label' => 'Capacitación', 'input_type' => 'combo', 'id_name' => 'capacitacion', 'type' => 'bselect', 'required' => TRUE),			//capacitacion sn
-				'horario_cap' => array('label' => 'horarios disponibles',  'type' => 'varchar', 'maxlength'=>'30'),		//horarios disponbles		
-				'intereses_cap' => array('label' => 'intereses',  'type' => 'varchar', 'maxlength'=>'300'),					//intereses    ,por rubro
-				'busca_empleo' => array('label' => 'Busqueda de empleo', 'input_type' => 'combo', 'id_name' => 'busca_empleo', 'type' => 'bselect', 'required' => TRUE),		//busca trabajo ,s/n
-				
-				'movilidad' => array('label' => 'vehiculo propio','type'=>'varchar', 'maxlength' => '30'),		//movilidad  tipo y categoria de carnet habilitante
-				'movil_carnet'	=> array('label' => 'tipo de carnet','type'=>'varchar', 'maxlength' => '30'),		//movilidad  tipo y categoria de carnet habilitante
-				'discapacidad' => array('label' => 'dicapacidad', 'type' => 'varchar', 'maxlength' => '30'),								//discapacidad
-				'cud' => array('label' => 'CUD', 'type' => 'varchar', 'maxlength' => '30'),										//nombre del archivo de imagen
-				'estudio' => array('label' => 'Nivel maximo de estudios alcanzado','input_type' => 'combo', 'id_name' => 'estudio', 'type' => 'bselect'),		//nivel de estudios 
-				'estudiosOt' => array('label' => 'titulo secundario', 'type' => 'varchar', 'maxlength' => '30'),
-				'grado' => array('label' => 'estudios de grado', 'type' => 'varchar', 'maxlength' => '30'),							//otros estudio
-				'idiomas' => array('label' => 'Idiomas', 'type' => 'varchar', 'maxlength' => '30'),							//idioma y nivel del 1-5
-				//'idiomas_niv' => array('label' => 'estudio', 'type' => 'varchar', 'maxlength' => '30'),							//idioma y nivel del 1-5
+				'domicilio' => array('label' => 'Domicilio', 'type'=>'text','maxlength' => '50', 'required'=> TRUE),			//domicilio
+				'distrito' => array('label' => 'Distrito', 'type'=>'text','maxlength' => '25', 'required'=> TRUE),			//distrito
+				'otro_cel' => array('label' => 'Otro Telefono', 'type' => 'number', 'maxlength' => '15', 'required' => TRUE),    	// otro telefono
+				'capacitacion' => array('label' => 'Capacitación', 'type'=>'text', 'id_name' => 'capacitacion', 'maxlength' => '1'),			//capacitacion sn
 
-				'computacion' => array('label' => 'programa de Informatica', 'type' => 'varchar', 'maxlength' => '30'),				//programa y nivel del 1-5
-				//'compu_niv' => array('label' => 'nivel ', 'type' => 'varchar', 'maxlength' => '30'),				//programa y nivel del 1-5
+				'horario_cap' => array('label' => 'horarios disponibles',  'type'=>'text', 'maxlength'=>'30'),		//horarios disponbles		
+				'intereses_cap' => array('label' => 'intereses', 'type'=>'text', 'maxlength'=>'300'),					//intereses    ,por rubro
+				'busca_empleo' => array('label' => 'Busqueda de empleo',  'type'=>'text', 'maxlength'=>'1'),		//busca trabajo ,s/n
+				'interes_lab' => array('label' => 'interes laboral', 'type'=>'text', 'maxlength' => '100'),								//campo rellenable
+				'disponib_lab' => array('label' => 'disponibilidad horaria', 'type' => 'text', 'maxlength' => '40'),					//combo de oppp y rotativo s/n franquero s/n
+				'condic' => array('label' => 'condiciones especiales', 'type' => 'text', 'maxlength' => '40'),					//combo de oppp y rotativo s/n franquero s/n
 
-				'cursos' => array('label' => 'Cursos', 'type' => 'varchar', 'rows' => 5, 'maxlength' => '30'),				//otros cursos
-				'experiencia' => array('label' => 'experiencia laboral', 'type' => 'varchar', 'maxlength' => '30'),				//rubro-puesto-duracion-personal a cargo s/n
-				'interes_lab' => array('label' => 'interes laboral', 'type' => 'varchar', 'maxlength' => '30'),								//campo rellenable
-				'disponib_lab' => array('label' => 'disponibilidad horaria', 'type' => 'varchar', 'maxlength' => '30'),					//combo de oppp y rotativo s/n franquero s/n
-				'freelance' => array('label' => 'Freelance', 'input_type' => 'combo', 'id_name' => 'freelance', 'type' => 'bselect'),		//s/n
-				'teletrabajo' => array('label' => 'Teletrabajo', 'input_type' => 'combo', 'id_name' => 'teletrabajo', 'type' => 'bselect'),		//sn
-				'viajante' => array('label' => 'Viajante', 'input_type' => 'combo', 'id_name' => 'viajante', 'type' => 'bselect'),		//sn
-				'cama_adentro' => array('label' => 'Cama adentro', 'input_type' => 'combo', 'id_name' => 'cama_adentro', 'type' => 'bselect'),		//sn
-				'casero' => array('label' => 'Casero', 'input_type' => 'combo', 'id_name' => 'casero', 'type' => 'bselect'),		//sn
-			//	'exmuni' => array('label' => 'trabajo en la municipalidad', 'input_type' => 'combo', 'id_name' => 'exmuni', 'type' => 'bselect'),		//sn
-				//'famimuni' => array('label' => 'Familiares en la municipalidad', 'input_type' => 'combo', 'id_name' => 'famimuni', 'type' => 'bselect'),		//sn
+				'movilidad' => array('label' => 'vehiculo propio','type'=>'text', 'maxlength' => '40'),		//movilidad  tipo y categoria de carnet habilitante
+				'movil_carnet'	=> array('label' => 'tipo de carnet','type'=>'text', 'maxlength' => '20'),		//movilidad  tipo y categoria de carnet habilitante
+				'discapacidad' => array('label' => 'dicapacidad', 'type' => 'text', 'maxlength' => '30'),								//discapacidad
+				'cud' => array('label' => 'CUD', 'type' => 'file'),										//nombre del archivo de imagen
+				'estudio' => array('label' => 'Nivel maximo de estudios','input_type' => 'combo', 'id_name' => 'estudio', 'type' => 'bselect'),		//nivel de estudios 
+				'estudiosOt' => array('label' => 'titulo secundario', 'type' => 'text', 'maxlength' => '30'),
+				'grado' => array('label' => 'estudios de grado', 'type' => 'text', 'maxlength' => '30'),							//otros estudio
+				'gradoo' => array('label' => 'estudios de grado', 'type' => 'text', 'maxlength' => '30'),							//otros estudio
+
+				'idiomas' => array('label' => 'Idiomas', 'type' => 'text', 'maxlength' => '40'),							//idioma y nivel del 1-5
+
+				'computacion' => array('label' => 'programa de Informatica', 'type' => 'text', 'maxlength' => '60'),				//programa y nivel del 1-5
+
+				'cursos' => array('label' => 'Cursos', 'type' => 'text', 'rows' => 5, 'maxlength' => '100'),//otros cursos
+				'oficios' => array('label' => 'oficios', 'type' => 'text', 'maxlength' => '60'),
+				'experiencia' => array('label' => 'experiencia laboral', 'type' => 'text', 'maxlength' => '30'),				//rubro-puesto-duracion-personal a cargo s/n
+				'exmuni' => array('label' => 'trabajo en la municipalidad', 'type'=>'varchar','maxlength' => '30'),		//sn
+				'famimuni' => array('label' => 'Familiares en la municipalidad', 'type'=>'varchar','maxlength' => '30'),		//sn
 				'aclaraciones' => array('label' => 'Aclaraciones', 'form_type' => 'textarea', 'rows' => 5, 'maxlength' => '300'),
-			//	'pdf' => array('label' => 'carga de curriculum', 'form_type' => 'textarea', 'rows' => 5, 'maxlength' => '300')
+				'pdf' => array('label' => 'carga de curriculum', 'type' => 'file')
 
 		);
-		$this->requeridos = array('Dni');
-		$this->unicos = array('Dni');
+		$this->requeridos = array('cuil');
+		$this->unicos = array('cuil');
 		// Inicializaciones necesarias colocar acá.        
 	}
 
@@ -110,8 +105,5 @@ class pedir_empleo_model extends MY_Model
 	{
 		return $this->array_estudio;
 	}
-	function get_si_no()
-	{
-		return $this->array_si_no;
-	}
+
 }

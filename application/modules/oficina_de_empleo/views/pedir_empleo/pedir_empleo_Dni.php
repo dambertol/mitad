@@ -42,7 +42,7 @@
     <div class="col-xs-12">
         <div class="x_panel">
             <div class="x_title">
-                <h2><?php echo (!empty($title_view)) ? $title_view : 'Dni'; ?></h2>
+                <h2><?php echo (!empty($title_view)) ? $title_view : 'cuil'; ?></h2>
                 <?php if (!empty($audi_modal)): ?>
                     <button type="button" class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#audi-modal">
                         <i class="fa fa-info-circle"></i>
@@ -58,15 +58,14 @@
 <!--  ********************************aca ocurre la magia **************** ************************-->
 
                     <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['Dni']['label']; ?> 
-                                <?php echo $fields['Dni']['form']; ?> 
+                                <?php echo $fields['cuil']['label']; ?> 
+                                <?php echo $fields['cuil']['form']; ?> 
                     </div>
                    
                 </div>
                 <div class="ln_solid"></div>
                 <div class="text-center">
                     <?php echo (!empty($txt_btn)) ? form_submit($data_submit, $txt_btn) : ''; ?>
-                    <?php echo ($txt_btn === 'Editar' || $txt_btn === 'Eliminar') ? form_hidden('id', $empleo->id) : ''; ?>
 
                     <a href="oficina_de_empleo/dar_empleo/listar" class="btn btn-default btn-sm">Cancelar</a> 
                 </div>
