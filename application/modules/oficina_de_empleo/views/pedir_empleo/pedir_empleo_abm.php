@@ -56,57 +56,27 @@
                 <div class="row">
                     
 <!--  ********************************aca ocurre la magia **************** ************************-->
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['cuil']['label']; ?> 
-                                <?php echo $fields['cuil']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['Dni']['label']; ?> 
-                                <?php echo $fields['Dni']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['nombre']['label']; ?> 
-                                <?php echo $fields['nombre']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['apellido']['label']; ?> 
-                                <?php echo $fields['apellido']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['telefono']['label']; ?> 
-                                <?php echo $fields['telefono']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['email']['label']; ?> 
-                                <?php echo $fields['email']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['genero']['label']; ?> 
-                                <?php echo $fields['genero']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['fecha_nac']['label']; ?> 
-                                <?php echo $fields['fecha_nac']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['domicilio']['label']; ?> 
-                                <?php echo $fields['domicilio']['form']; ?> 
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                <label for="distrito" class="control-label col-sm-3">Distrito</label> 
-                                <div class="col-sm-9">
-                                    <div class="dropdown bootstrap-select form-control bs3">
-                                    <select name="distrito" class="form-control selectpicker distrito" id="distrito" data-live-search="true" title="-- Seleccionar --" tabindex="null">
-                                        <option class="bs-title-option" value=""></option>
-                                    </select>
-                                </div> 
-                            </div>
-                    </div>
-
-                    <div class="change_col col-md-6 form-group">
-                                <?php echo $fields['otro_cel']['label']; ?> 
-                                <?php echo $fields['otro_cel']['form']; ?> 
-                    </div>
+<div class="row" id="row-persona">
+					<h2 class="text-center">Datos personales</h2>
+					<?php foreach ($field as $field): ?>
+						<div class="change_col col-md-6 form-group">
+							<?php echo $field['label']; ?> 
+							<?php echo $field['form']; ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
+                   
+                   
+                    <div class="row" id="row-domicilio">
+					<br />
+					<h2 class="text-center form-group">Datos domilicio</h2>
+					<?php foreach ($fields_domicilio as $field_domicilio): ?>
+						<div class="change_col col-md-6 form-group">
+							<?php echo $field_domicilio['label']; ?> 
+							<?php echo $field_domicilio['form']; ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
                     </div>
 
                 <div class="ln_solid"></div>
@@ -123,7 +93,7 @@
                         <label for="horario_cap" class="control-label col-sm-3">Horario disponible</label> 
                         <div class="col-sm-9">
                         <div class="dropdown bootstrap-select form-control bs3">
-                            <select name="horario_cap" class="form-control selectpicker" id="horario_cap" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
+                            <select name="horario_cap" class="form-control selectpicker horario_cap" id="horario_cap" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                 <option class="bs-title-option" value=""></option>
                                 <option value="mañana">mañana</option>
                                 <option value="tarde" >tarde</option>
@@ -353,11 +323,11 @@
                 <div class="ln_solid otro"></div>
                 <div class="text-center">
                     <?php echo (!empty($txt_btn)) ? form_submit($data_submit, $txt_btn) : ''; ?>
-                    <?php echo ($txt_btn === 'Editar' || $txt_btn === 'Eliminar') ? form_hidden('id', $empleo->Dni) : ''; ?>
+                    <?php echo ($txt_btn === 'Editar' || $txt_btn === 'Eliminar') ? form_hidden('id', $empleo->cuil) : ''; ?>
                     <a href="oficina_de_empleo/pedir_empleo/listar" class="btn btn-default btn-sm">Cancelar</a> 
                 </div>
 
-                <script>//esto completa los campos para ser leidos por la base de datos peeero no los va a leer correctamente para la edicion y lectura 
+                <script>//esto completa los campos nuevos para ser leidos por la base de datos peeero no los va a leer correctamente para la edicion y lectura 
                     
                     let idioma=document.querySelectorAll(".idioma");
                     let idiomaN=document.querySelectorAll(".Nidioma");
@@ -414,11 +384,11 @@
     'Masoterapia','Mecánica y Producción Automatizada','Medicina','Metalmecánico','Minería y Gas Sustentable','Niñez, Adolescencia y Familia','Nutrición','Obstetricia','Odontología','Otros',
     'Petróleo y Gas','Programador','Protesis Dental','Psicología','Psicopedagogía','Publicidad','Química Industrial','Radiología','Recursos Humanos','Recursos Naturales','Relaciones Humanas',
     'Seguridad Pública y Penitenciaría','Sistemas','Sonido','Trabajo Social'];
-    const idiomas=['Albanés', 'Alemán', 'Arabe', 'Bielorruso', 'Búlgaro', 'Catalán', 'Checo', 'Chino', 'Coreano', 'Croata',
+    const idiomas = ['Albanés', 'Alemán', 'Arabe', 'Bielorruso', 'Búlgaro', 'Catalán', 'Checo', 'Chino', 'Coreano', 'Croata',
     'Danés', 'Eslovaco', 'Esloveno', 'Español', 'Estonio', 'Frances', 'Filandés', 'Griego', 'Húngaro', 'Idish', 'Indonesio',
     'Indonesio', 'Inglés', 'Islandés', 'Italiano','Japonés', 'Ladino', 'Latín', 'Letón', 'Lituano', 'Neerlandés', 'Noruego',
     'Polaco', 'Portugues', 'Rumano', 'Ruso', 'Serbio', 'Sueco', 'Turco', 'Ucraniano', 'Vasco'];
-    const oficios=['Administración','Atención al Público','Bachero','Barbero','Bodega','Cadete','Cajero','Carpintería','Chapería y Pintura',
+    const oficios = ['Administración','Atención al Público','Bachero','Barbero','Bodega','Cadete','Cajero','Carpintería','Chapería y Pintura',
     'Chofer','Cosecha','Cocina','Community Manager','Construcción','Control de Stock','Costura/Textil','Cuidado de Personas',
     'Delivery','Deposito','Diseño','Electricidad','Estética','Gomero','Informática','Jardinería','Limpieza','Liquidador de Sueldos',
     'Mantenimiento','Marketing','Masoterapeuta','Mecánico','Metalúrgico','Mozo','Operario','Panadería','Peluquería','Pintor','Poda',
@@ -428,13 +398,13 @@
     const categorias = ['A1', 'A2', 'A3', 'B1', 'B2', 'C1', 'C2','C3', 'D1', 'D2','D3', 'D4', 'E1', 'E2', 'F', 'G1', 'G2','G3'];
     const movilidad = ['Auto','Bicicleta','Camioneta','Moto'];
     const discapacidad =['Auditiva', 'Intelectual', 'Motriz', 'Visceral','Visual', 'Otra'];
-    const distrito = ['Agrelo', 'Cacheuta', 'Carrodilla', 'Chacras de Coria', 'Lujan de Cuyo', 'Mayor Drummond', 'El Carrizal', 'La Puntilla', 'Las Compuertas', 'Perdriel', 'Potrerillos', 'Ugarteche', 'Vertientes del Pedemonte', 'Vistalba'];
     const interese = ['Atención al Público', 'Barbería', 'Carpintería', 'Club Empleo Joven', 'Costura/Textil', 'Informática', 'Introducción al Mundo del Trabajo', 'Metalúrgica', 'Panadería', 'Pastelería', 'Peluquería', 'Otro'];
     const titsecundario = ['Bachiller', 'Perito Mercantil/Gestión Administrativa', 'Técnico/aux (otras orientaciones)', 'Técnico/aux Electricista', 'Técnico/aux Electromecánico', 'Técnico/aux Electrónico', 'Técnico/aux en Aeronáutica', 'Técnico/aux en Automotores', 
     'Técnico/aux en Aviónica', 'Técnico/aux en Computación', 'Técnico/aux en Enología', 'Técnico/aux en Industria de Alimentos', 'Técnico/aux en Industria de Proceso', 'Técnico/aux en Informática', 'Técnico/aux en Madera y Muebles', 
     'Técnico/aux en Mecanización Agropecuaria', 'Técnico/aux en Minería', 'Técnico/aux en Producción Agropecuaria', 'Técnico/aux en Programación', 'Técnico/aux Maestro Mayor de Obra','Técnico/aux Mecánico', 'Técnico/aux Óptico', 'Técnico/aux Químico'];
-    const horarios=['mañana','tarde','noche','rotativo','franquero'];
-    const condiciones=['freelance','teletrabajo','viajante','cama adentro','casero'];
+    const horarios = ['mañana','tarde','noche','rotativo','franquero'];
+    const condiciones = ['freelance','teletrabajo','viajante','cama adentro','casero'];
+     // const sexo = ['Femenino','Masculino','no binario','hombre trans','mujer trans','otro'];
 
             function optar(opciones,clase){
             const contenedor = document.querySelector(clase);
@@ -456,14 +426,13 @@
     optar(computacion,".computacio");
     optar(movilidad,".movilidad");
     optar(discapacidad,".discapacidad");
-    optar(distrito,".distrito");
     optar(titsecundario,".titsecundario");
     optar(interese,".interes_lab");
     optar(carreras,".interes_lab");
     optar(horarios,".disponib_lab");
     optar(condiciones,".condic");
 
-const crearCampo=function(objetivo,clase,arraii){
+const crearCampo=function(objetivo,clase,arraii,nombre){
 let classse=clase+(Math.floor(Math.random()*1000));
 let cont = document.createDocumentFragment(); 
 let conten=document.getElementById(objetivo);  
@@ -482,8 +451,8 @@ newDiv2.setAttribute("class","dropdown  form-control bs3"); //este es el que cag
 let newSelect = document.createElement("SELECT");
 newSelect.setAttribute("name",classse);
 newSelect.setAttribute("class","form-select "+classse+" "+clase);
-newSelect.setAttribute("title","--idioma--");
-newSelect.setAttribute("placeholder","--idioma--");
+newSelect.setAttribute("title","--"+nombre+"--");
+newSelect.setAttribute("placeholder","--"+nombre+"--");
 newSelect.setAttribute("data-live-search","true");
 newSelect.setAttribute("aria-label","Default select example");
 newSelect.setAttribute("tabindex","null");
@@ -528,17 +497,37 @@ conten.appendChild(cont);
 
 optar(arraii,("."+classse));
 };
-// borrar registro
+// borrar campo
 $(document).on('click', '#removeRow', function () {
 $(this).closest('#poliglota1').remove();
 });
 
 let botonIdiom=document.getElementById("addCampo");
-botonIdiom.addEventListener("click",functi=>crearCampo("poliglota","idioma",idiomas));
+botonIdiom.addEventListener("click",functi=>crearCampo("poliglota","idioma",idiomas,"idioma"));
 
 let botonCompu=document.getElementById("addCampoCompu");
-botonCompu.addEventListener("click",functi=>crearCampo("tecno","computacio",computacion));
+botonCompu.addEventListener("click",functi=>crearCampo("tecno","computacio",computacion,"programa"));
 
 </script>
 
+<script>
+	$(document).ready(function() {
+		domicilio_row();
+		$('#cuil').inputmask({
+			mask: '99-99999999-9',
+			removeMaskOnSubmit: true
+		});
 
+
+			$('#carga_domicilio').on('changed.bs.select', function(e) {
+				domicilio_row();
+			});
+			function domicilio_row() {
+					$('#row-domicilio :input').attr("disabled", false);
+					$("#localidad").selectpicker('refresh');
+					$("#row-domicilio").show();
+
+			}
+
+	});
+</script>

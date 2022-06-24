@@ -13,12 +13,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 class pedir_empleo_model extends MY_Model
 {
-	private $array_genero = array(
-			'masc' => 'masculino',
-			'fem' => 'femenino',
-			'nobi' => 'no binario',
-			'trans' => 'trans',
-	);
 	private $array_estudio = array(  
 			'primario incom'=>'primario incom',
 			'pimario'=>'pimario',
@@ -36,21 +30,13 @@ class pedir_empleo_model extends MY_Model
 		$this->full_log = TRUE;
 		$this->msg_name = 'base de datos de curriculum';
 		$this->id_name = 'cuil';
-		$this->columnas = array('cuil','Dni','nombre','apellido','telefono','email','genero','fecha_nac','domicilio','distrito','otro_cel','capacitacion','horario_cap','intereses_cap','busca_empleo','condic','movilidad','movil_carnet','discapacidad','cud','estudio','estudiosOt','grado','gradoo','idiomas','computacion','cursos','oficios','experiencia','interes_lab','disponib_lab','exmuni','famimuni','aclaraciones','pdf');
+		$this->columnas = array('cuil','persona_id','sexo','celular','capacitacion','horario_cap','intereses_cap','busca_empleo','condic','movilidad','movil_carnet','discapacidad','cud','estudio','estudiosOt','grado','gradoo','idiomas','computacion','cursos','oficios','experiencia','interes_lab','disponib_lab','exmuni','famimuni','aclaraciones','pdf');
 		$this->fields = array(    //estos campos son del formulario propio*******************************************
 																														//estos datos son de otra base y no son editables
-				'cuil' => array('label' => 'Cuil', 'type' => 'text', 'maxlength' => '12', 'disabled' => false),    		//Dni
-				'Dni' => array('label' => 'Dni', 'type' => 'text', 'maxlength' => '9', 'disabled' => false),    		//Dni
-				'nombre' => array('label' => 'Nombres', 'type'=>'text', 'maxlength' => '30', 'required' => TRUE),			//nombre del usuario
-				'apellido' => array('label' => 'Apellido', 'type'=>'text', 'maxlength' => '30', 'required' => TRUE),			//nombre del usuario
-				'telefono' => array('label' => 'Telefono', 'type' => 'text', 'maxlength' => '15', 'required' => TRUE),    	//telefono
-				'email' => array('label' => 'email', 'type'=>'email', 'maxlength' => '30', 'required' => TRUE ),								//correo electronico
-																													//estos campos son propios
-				'genero' => array('label' => 'Genero', 'input_type' => 'combo', 'id_name' => 'genero', 'type' => 'bselect', 'required' => TRUE),			//genero
-				'fecha_nac' => array('label' => 'Fecha de nacimiento', 'type' => 'date', 'required' => TRUE),						//nacimiento
-				'domicilio' => array('label' => 'Domicilio', 'type'=>'text','maxlength' => '50', 'required'=> TRUE),			//domicilio
-				'distrito' => array('label' => 'Distrito', 'type'=>'text','maxlength' => '25', 'required'=> TRUE),			//distrito
-				'otro_cel' => array('label' => 'Otro Telefono', 'type' => 'number', 'maxlength' => '15', 'required' => TRUE),    	// otro telefono
+				'cuil' => array('label' => 'Cuil', 'type' => 'text', 'maxlength' => '12', 'disabled' => false),    		//dni
+				'sexo' => array('label' => 'genero',  'type'=>'text', 'maxlength'=>'12'),		//horarios disponbles		
+
+				'celular' => array('label' => 'Otro Telefono', 'type' => 'number', 'maxlength' => '15', 'required' => TRUE),    	// otro telefono
 				'capacitacion' => array('label' => 'Capacitación', 'type'=>'text', 'id_name' => 'capacitacion', 'maxlength' => '1'),			//capacitacion sn
 
 				'horario_cap' => array('label' => 'horarios disponibles',  'type'=>'text', 'maxlength'=>'30'),		//horarios disponbles		
@@ -65,7 +51,7 @@ class pedir_empleo_model extends MY_Model
 				'discapacidad' => array('label' => 'dicapacidad', 'type' => 'text', 'maxlength' => '30'),								//discapacidad
 				'cud' => array('label' => 'CUD', 'type' => 'file'),										//nombre del archivo de imagen
 				'estudio' => array('label' => 'Nivel maximo de estudios','input_type' => 'combo', 'id_name' => 'estudio', 'type' => 'bselect'),		//nivel de estudios 
-				'estudiosOt' => array('label' => 'titulo secundario', 'type' => 'text', 'maxlength' => '30'),
+				'estudiosOt' => array('label' => 'titulo secundario', 'type' => 'text', 'maxlength' => '40'),
 				'grado' => array('label' => 'estudios de grado', 'type' => 'text', 'maxlength' => '30'),							//otros estudio
 				'gradoo' => array('label' => 'estudios de grado', 'type' => 'text', 'maxlength' => '30'),							//otros estudio
 
@@ -96,10 +82,6 @@ class pedir_empleo_model extends MY_Model
 	protected function _can_delete($delete_id)
 	{
 		return TRUE;
-	}
-	function get_genero()
-	{
-		return $this->array_genero;
 	}
 	function get_estudio()
 	{
