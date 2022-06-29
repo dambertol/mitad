@@ -299,6 +299,7 @@ if ($this->form_validation->run() === TRUE)
 				}
 			
 			}
+
 			$fecha = DateTime::createFromFormat('d/m/Y', $this->input->post('fecha_nac'));
 			$this->db->trans_begin();
 			$trans_ok = TRUE;
@@ -309,7 +310,7 @@ if ($this->form_validation->run() === TRUE)
 				'sexo' => $this->input->post('sexo'),
 				'celular' => $this->input->post('celular'),
 				'capacitacion'=>(empty($this->input->post('capacitacion'))?'n':'s'),
-				'horario_cap' => $this->input->post('horario_cap'),
+				'horario_cap' => $this->input->post('horario_cap'); ,
 				'intereses_cap' => $this->input->post('intereses_cap'),
 				'busca_empleo' => (empty($this->input->post('busca_empleo'))?'n':'s'),
 				'condic' => $this->input->post('condic'),
@@ -376,7 +377,6 @@ if ($this->form_validation->run() === TRUE)
 				//con estas anotaciones creo la base de datos
 				//CREATE TABLE `wi_dev`.`oe_cv`(`cuil` BIGINT(12) PRIMARY KEY,`persona_id` int(10) not null, `sexo` varchar(10) not null, `celular` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(40),`grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100), `oficios` VARCHAR(60),`experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
 				//CREATE TABLE `wi_dev_aud`.`oe_cv`(`audi_id` INT AUTO_INCREMENT PRIMARY KEY,`cuil` BIGINT(12) not null, `persona_id` INT(10) not null, `sexo` varchar(10) not null, `celular` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(40),`grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100), `oficios` VARCHAR(60),`experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
-
 
 	public function eliminar($cuil = NULL)
 	{
