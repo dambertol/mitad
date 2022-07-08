@@ -19,6 +19,7 @@ class pedir_empleo  extends MY_Controller
 		$this->load->model('Nacionalidades_model');
         $this->load->model('Domicilios_model');
         $this->load->model('Localidades_model');
+		$this->load->model('oficina_de_empleo/Adjuntos_model');
 		$this->load->model('Auth0_model');
         $this->load->model('Oro_model');
 		$this->grupos_permitidos = array('admin','oficina_empleo_general','oficina_empleo');
@@ -125,7 +126,7 @@ class pedir_empleo  extends MY_Controller
 			}
 	}
 
-	public function agregarC($cuil)    //esta funcion es del boton que me da la funcion de agregar 
+	public function agregarC($cuil)    //esta funcion es del boton que me da la funcion de agregar get_object_vars
 	{
 		if (empty($cuil)){
 			echo '<script language="javascript">alert("algo raro ocurrio");</script>';
@@ -138,6 +139,12 @@ class pedir_empleo  extends MY_Controller
 		if (!empty($empleo))												//existe curriculum
 		{
 			$curri=true;
+			$adjuntos = $this->Adjuntos_model->get(array('cuil' => $cuil));
+			if(!empty($adjuntos)){
+				$adj=true;
+			}else{
+				$adj=false;
+			}
 		}else{
 			$curri=false;
 		}
@@ -168,7 +175,7 @@ class pedir_empleo  extends MY_Controller
 				}
 				$pers=false;
 			}
-			if (!empty($persona->domicilio_id)) 							//existe domicilio
+			if (!empty($persona->domicilio_id)) 							//existe domicilio 
 			{
 			//	$person[0]->carga_domicilio = 'SI';
 				$domi=true;
@@ -186,30 +193,29 @@ class pedir_empleo  extends MY_Controller
 		$this->set_model_validation_rules($this->Domicilios_model);
 		$this->set_model_validation_rules($this->pedir_empleo_model); 
 
-$error_msg = FALSE;
-if ($this->form_validation->run() === TRUE)
-{
-	if ($pers == false || in_groups($this->grupos_permitidos,$this->grupos))
-	{
-//	$error_msg = FALSE;
-		$this->db->trans_begin();
-		$trans_ok = TRUE;
-		$domic=($domi?'update':'create');
-		$var1=($domi?($persona->domicilio_id):'');
-		$trans_ok &= $this->Domicilios_model->$domic(array(
-			'id'=>$var1,
-			'calle' => $this->input->post('calle'),
-			'barrio' => $this->input->post('barrio'),
-			'altura' => $this->input->post('altura'),
-			'piso' => $this->input->post('piso'),
-			'dpto' => $this->input->post('dpto'),
-			'manzana' => $this->input->post('manzana'),
-			'casa' => $this->input->post('casa'),
-			'localidad_id' => $this->input->post('localidad')), FALSE);
-			$domi?($domicilio_id = $persona->domicilio_id):($domicilio_id = $this->Domicilios_model->get_row_id());
+		$error_msg = FALSE;
+		if ($this->form_validation->run() === TRUE)
+		{
+			if ($pers == false || in_groups($this->grupos_permitidos,$this->grupos))
+			{
+				$this->db->trans_begin();
+					$trans_ok = TRUE;
+					$domic=($domi?'update':'create');
+					$var1=($domi?($persona->domicilio_id):'');
+					$trans_ok &= $this->Domicilios_model->$domic(array(
+						'id'=>$var1,
+						'calle' => $this->input->post('calle'),
+						'barrio' => $this->input->post('barrio'),
+						'altura' => $this->input->post('altura'),
+						'piso' => $this->input->post('piso'),
+						'dpto' => $this->input->post('dpto'),
+						'manzana' => $this->input->post('manzana'),
+						'casa' => $this->input->post('casa'),
+						'localidad_id' => $this->input->post('localidad')), FALSE);
+						$domi?($domicilio_id = $persona->domicilio_id):($domicilio_id = $this->Domicilios_model->get_row_id());
 
-			$pe=($pers?'update':'create');
-			$var2=($pers?($persona_id):'');
+					$pe=($pers?'update':'create');
+					$var2=($pers?($persona_id):'');
 
 		$trans_ok &= $this->Personas_model->$pe(array(
 			'id'=>$var2,
@@ -297,7 +303,6 @@ if ($this->form_validation->run() === TRUE)
                         $error_msg .= $this->Auth0_model->errors();
                     }
 				}
-			
 			}
 
 			$fecha = DateTime::createFromFormat('d/m/Y', $this->input->post('fecha_nac'));
@@ -310,14 +315,14 @@ if ($this->form_validation->run() === TRUE)
 				'sexo' => $this->input->post('sexo'),
 				'celular' => $this->input->post('celular'),
 				'capacitacion'=>(empty($this->input->post('capacitacion'))?'n':'s'),
-				'horario_cap' => $this->input->post('horario_cap'); ,
+				'horario_cap' => $this->input->post('horario_cap'), 
 				'intereses_cap' => $this->input->post('intereses_cap'),
 				'busca_empleo' => (empty($this->input->post('busca_empleo'))?'n':'s'),
 				'condic' => $this->input->post('condic'),
 				'movilidad' => $this->input->post('movilidad'),
 				'movil_carnet' => $this->input->post('movil_tipo'),
 				'discapacidad' => $this->input->post('discapacidad'),
-				'cud' => $this->input->post('cud'),
+				'cud' => $this->input->post('cud'),					//tengo que sacar este campo******************************
 				'estudio' => $this->input->post('estudio'),
 				'estudiosOt' => $this->input->post('estudiosOt'),
 				'grado' => $this->input->post('grado'),
@@ -332,14 +337,102 @@ if ($this->form_validation->run() === TRUE)
 				'exmuini' => (empty($this->input->post('exmuni'))?'n':'s'),
 				'famimuni' => (empty($this->input->post('famimuni'))?'n':'s'),
 				'aclaraciones' => $this->input->post('aclaraciones'),
-				'pdf' => $this->input->post('pdf'),
+				'pdf' => $this->input->post('pdf'), 				//$Adjunto_id,//tengo que sacar este campo******************************
 						), FALSE);
 				
+
+
+
+
+
+						$adjuntos_agregar_post = $this->input->post('adjunto_agregar');
+						if (!empty($adjuntos_agregar_post))
+						{
+							foreach ($adjuntos_agregar_post as $Adjunto_id => $Adjunto_name)
+							{
+								$adjunto = $this->Adjuntos_model->get(array(
+									'id' => $Adjunto_id,
+									'nombre' => $Adjunto_name,
+									'usuario_subida' => $cuil //this->session->userdata('user_id')list  incidencia
+								));
+			
+								if (!empty($adjunto) && empty($adjunto->documento_id))
+								{
+									$viejo_archivo = $adjunto->ruta . $adjunto->nombre;
+									if (file_exists($viejo_archivo))
+									{
+										$nueva_ruta = "uploads/oficina_de_empleo/pedir_empleo/" . str_pad($cuil, 6, "0", STR_PAD_LEFT) . "/";
+										if (!file_exists($nueva_ruta))
+										{
+											mkdir($nueva_ruta, 0755, TRUE);
+										}
+										$nuevo_nombre = str_pad($Adjunto_id, 6, "0", STR_PAD_LEFT) . "." . pathinfo($adjunto->nombre)['extension'];
+										$trans_ok &= $this->Adjuntos_model->update(array(
+											'id' => $Adjunto_id,
+											'nombre' => $nuevo_nombre,
+											'ruta' => $nueva_ruta,
+											'documento_id' => $cuil
+												), FALSE);
+										$renombrado = rename($viejo_archivo, $nueva_ruta . $nuevo_nombre);
+										if (!$renombrado)
+										{
+											$trans_ok = FALSE;
+										}
+									}
+									else
+									{
+										$trans_ok = FALSE;
+										$error_msg = '<br />Se ha producido un error con los adjuntos.';
+									}
+								}
+								else
+								{
+									$trans_ok = FALSE;
+									$error_msg = '<br />Se ha producido un error con los adjuntos.';
+								}
+							}
+						}
+			
+						$adjuntos_eliminar_post = $this->input->post('adjunto_eliminar');
+						if (!empty($adjuntos_eliminar_post))
+						{
+							foreach ($adjuntos_eliminar_post as $Adjunto_id => $Adjunto_name)
+							{
+								$adjunto = $this->Adjuntos_model->get(array(
+									'id' => $Adjunto_id,
+									'nombre' => $Adjunto_name,
+									'usuario_subida' => $cuil //this->session->userdata('user_id')
+								));
+			
+								if (!empty($adjunto) && empty($adjunto->documento_id))
+								{
+									$viejo_archivo = $adjunto->ruta . $adjunto->nombre;
+									if (file_exists($viejo_archivo))
+									{
+										$trans_ok &= $this->Adjuntos_model->delete(array('id' => $Adjunto_id), FALSE);
+										$borrado = unlink($viejo_archivo); //No funciona directo a $trans_ok
+										if (!$borrado)
+										{
+											$trans_ok = FALSE;
+										}
+									}
+								}
+							}
+						}
+
+
+
+
+
+
+
+
 			if ($this->db->trans_status() && $trans_ok)
 			{
 				$this->db->trans_commit();
 				$this->session->set_flashdata('message', $this->pedir_empleo_model->get_msg()); 
-				redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh'); 
+				//redirect('oficina_de_empleo/pedir_empleo/listar', 'refresh');
+		
 			}
 			else
 			{
@@ -352,6 +445,134 @@ if ($this->form_validation->run() === TRUE)
 			}
 		}
 		$data['error'] = (!empty($error_msg)) ? $error_msg : ((validation_errors()) ? validation_errors() : $this->session->flashdata('error'));
+
+		///////////////////esto se agrega en editar    id es el id de incidencia
+        $this->load->model('oficina_de_empleo/Adjuntos_model');
+        $adjuntos = $this->Adjuntos_model->get(array(
+            'documento_id' => $cuil,
+            // 'join' => array(
+            //     array('oe_tipos_adjuntos', 'oe_tipos_adjuntos.id = oe_adjunto.tipo_id', 'LEFT', array('oe_tipos_adjuntos.nombre as tipo_adjunto'))
+            // )
+        ));
+
+        $array_adjuntos = array();//este submetodo se agrega para el metodo editar
+        if (!empty($adjuntos))
+        {
+            foreach ($adjuntos as $Adjunto)
+            {
+                $array_adjuntos[$Adjunto->id] = $Adjunto;
+                $array_adjuntos[$Adjunto->id]->name = pathinfo($Adjunto->nombre)['filename'];
+                $array_adjuntos[$Adjunto->id]->extension = pathinfo($Adjunto->nombre)['extension'];
+				$array_adjuntos[$Adjunto->id]->tipo_adjunto = $this->Adjuntos_model->get_tipo_adjunto()[(get_object_vars($Adjunto)['tipo_id'])];
+
+
+			//	echo '<script language="javascript">console.log("'.print_r(get_object_vars($Adjunto)['tipo_id']).'");</script>';
+
+
+
+
+
+                // $array_adjuntos[$Adjunto->id]->tipo_adjunto = 
+				
+				
+				// $this->Adjuntos_model->get_tipo_adjunto()     [$Adjunto->id]['tipo_id'];
+            }
+        }
+        $data['array_adjuntos'] = $array_adjuntos;
+
+
+
+        $this->load->model('oficina_de_empleo/Adjuntos_model');
+        $adjuntos_agregar_post = $this->input->post('adjunto_agregar');
+        if (!empty($adjuntos_agregar_post))
+        {
+            $adjuntos_agregar_id = array();
+            foreach ($adjuntos_agregar_post as $Adjunto_id => $Adjunto_name)
+            {
+                $adjuntos_agregar_id[] = $Adjunto_id;
+            }
+
+            $adjuntos_agregar = $this->Adjuntos_model->get(array(
+                'where' => array(
+                    array('column' => 'oe_adjunto.id IN', 'value' => '(' . implode(',', $adjuntos_agregar_id) . ')', 'override' => TRUE)
+                )
+            ));
+
+            $array_adjuntos_agregar = array();
+            if (!empty($adjuntos_agregar))
+            {
+                foreach ($adjuntos_agregar as $Adjunto)
+                {
+                    $array_adjuntos_agregar[$Adjunto->id] = $Adjunto;
+                    $array_adjuntos_agregar[$Adjunto->id]->extension = pathinfo($Adjunto->nombre)['extension'];
+                }
+            }
+            $data['array_adjuntos_agregar'] = $array_adjuntos_agregar;
+        }
+
+        $adjuntos_eliminar_post = $this->input->post('adjunto_eliminar');
+        if (!empty($adjuntos_eliminar_post))
+        {
+            $adjuntos_eliminar_id = array();
+            foreach ($adjuntos_eliminar_post as $Adjunto_id => $Adjunto_name)
+            {
+                $adjuntos_eliminar_id[] = $Adjunto_id;
+            }
+
+            $adjuntos_eliminar = $this->Adjuntos_model->get(array(
+                'where' => array(
+                    array('column' => 'oe_adjunto.id IN', 'value' => '(' . implode(',', $adjuntos_eliminar_id) . ')', 'override' => TRUE)
+                )
+            ));
+
+            $array_adjuntos_eliminar = array();
+            if (!empty($adjuntos_eliminar))
+            {
+                foreach ($adjuntos_eliminar as $Adjunto)
+                {
+                    $array_adjuntos_eliminar[$Adjunto->id] = $Adjunto;
+                    $array_adjuntos_eliminar[$Adjunto->id]->extension = pathinfo($Adjunto->nombre)['extension'];
+                }
+            }
+            $data['array_adjuntos_eliminar'] = $array_adjuntos_eliminar;
+        }
+
+        $data['adjuntos_eliminar_existente_post'] = array();
+
+        if ($this->input->post('adjunto_eliminar_existente'))//esto se agrega de editar
+        {
+            $data['adjuntos_eliminar_existente_post'] = $this->input->post('adjunto_eliminar_existente');
+        }
+        else
+        {
+            $data['adjuntos_eliminar_existente_post'] = array();
+        }
+
+        $data['edita_adjuntos'] = TRUE;//esto tambien
+
+
+        // $this->Incidencias_model->fields['area']['array'] = $array_area;
+        // $this->Incidencias_model->fields['categoria']['array'] = $array_categoria;
+        // $this->Incidencias_model->fields['sector']['array'] = $array_sector;
+        // $this->Incidencias_model->fields['tecnico']['array'] = $array_tecnico;
+
+       // $data['fields'] = $this->build_fields($this->Incidencias_model->fields);
+       // $data['back_url'] = 'listar';
+        $data['css'][] = 'vendor/bootstrap-fileinput/css/fileinput.css';
+        $data['js'][] = 'vendor/bootstrap-fileinput/js/fileinput.js';
+        $data['js'][] = 'vendor/bootstrap-fileinput/js/locales/es.js';
+        $data['js'][] = 'vendor/bootstrap-fileinput/themes/fa/theme.js';
+        $data['css'][] = 'vendor/lightbox/css/ekko-lightbox.min.css';
+        $data['js'][] = 'vendor/lightbox/js/ekko-lightbox.min.js';
+      //  $data['js'][] = 'js/incidencias/base.js';
+
+
+
+
+
+
+
+
 
 	//	$this->Personas_model->fields['celular']['value'] =$celular; 
 		$this->pedir_empleo_model->fields['estudio']['array'] = $this->pedir_empleo_model->get_estudio(); 
@@ -377,6 +598,13 @@ if ($this->form_validation->run() === TRUE)
 				//con estas anotaciones creo la base de datos
 				//CREATE TABLE `wi_dev`.`oe_cv`(`cuil` BIGINT(12) PRIMARY KEY,`persona_id` int(10) not null, `sexo` varchar(10) not null, `celular` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(40),`grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100), `oficios` VARCHAR(60),`experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
 				//CREATE TABLE `wi_dev_aud`.`oe_cv`(`audi_id` INT AUTO_INCREMENT PRIMARY KEY,`cuil` BIGINT(12) not null, `persona_id` INT(10) not null, `sexo` varchar(10) not null, `celular` BIGINT(15), `capacitacion` VARCHAR(1) NOT NULL, `horario_cap` VARCHAR(30), `intereses_cap` VARCHAR(300), `busca_empleo` VARCHAR(1), `condic` VARCHAR(40), `movilidad` VARCHAR(40), `movil_carnet` VARCHAR(20), `discapacidad` VARCHAR(30), `cud` VARCHAR(30), `estudio` VARCHAR(20), `estudiosOt` VARCHAR(40),`grado` VARCHAR(30),`gradoo` VARCHAR(30), `idiomas` VARCHAR(40), `computacion` VARCHAR(60), `cursos` VARCHAR(100), `oficios` VARCHAR(60),`experiencia` VARCHAR(100), `interes_lab` VARCHAR(100), `disponib_lab` VARCHAR(40),`exmuni` CHARACTER(1),`famimuni` CHARACTER(1), `aclaraciones` varchar(300),`pdf` varchar(30),`audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+
+				//CREATE TABLE `wi_dev`.`oe_adjunto`(`id` INT PRIMARY KEY AUTO_INCREMENT,`tipo_id` int,`nombre` varchar(100), `descripcion` varchar(1), `ruta` varchar(255), `tamanio` int,`hash` text,`documento_id` bigint(12),`fecha_subida` date,`usuario_subida` int, `audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+				//CREATE TABLE `wi_dev_aud`.`oe_adjunto`(`id` INT PRIMARY KEY AUTO_INCREMENT,`tipo_id` int,`nombre` varchar(100), `descripcion` varchar(1), `ruta` varchar(255), `tamanio` int,`hash` text,`documento_id` bigint(12),`fecha_subida` date, `usuario_subida` int, `audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+
+				//CREATE TABLE `wi_dev`.`oe_tipos_adjuntos`(`id` INT PRIMARY KEY AUTO_INCREMENT, `nombre` varchar(20), `audi_usuario` int not null ,`audi_fecha` date,`audi_accion` CHARACTER(1))ENGINE = MyISAM;
+
+
 
 	public function eliminar($cuil = NULL)
 	{
