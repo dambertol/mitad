@@ -76,9 +76,9 @@ class pedir_empleo  extends MY_Controller
 			$identidad=$this->session->userdata('identity');
 			$this->datatables
 				->select('oe_cv.cuil, personas.nombre, personas.apellido, oe_cv.capacitacion, oe_cv.busca_empleo, personas.email, oe_cv.celular , personas.fecha_nacimiento')
-				->from('oe_cv')
-				->join('personas', 'personas.cuil = oe_cv.cuil', 'left')
-				->where("oe_cv.Dni=$identidad")      //esta linea es la que cambia
+				->from('personas')
+				->join('oe_cv', 'oe_cv.cuil = personas.cuil', 'left')
+				->where("personas.Dni=$identidad")      //esta linea es la que cambia
 				->add_column('ver', '<a href="oficina_de_empleo/pedir_empleo/ver/$1" title="Ver" class="btn btn-primary btn-xs"><i class="fa fa-search"></i></a>', 'cuil')  
 				->add_column('editar', '<a href="oficina_de_empleo/pedir_empleo/agregarC/$1" title="Editar" class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></a>', 'cuil')  
 				->add_column('eliminar', '<a href="oficina_de_empleo/pedir_empleo/eliminar/$1" title="Eliminar" class="btn btn-primary btn-xs"><i class="fa fa-times"></i></a>', 'cuil');  
@@ -88,14 +88,21 @@ class pedir_empleo  extends MY_Controller
 
 	public function agregar()    															//esta funcion es del boton que me da la funcion de agregar 
 	{  
-			if ($_POST || !in_groups($this->grupos_permitidos,$this->grupos))				//primer condicion de saltarse primer formulario
+		$grup=in_groups($this->grupos_permitidos,$this->grupos)?true:false;
+			if ($_POST || $grup==false)				//primer condicion de saltarse primer formulario
 			{	
-				if (!$_POST && !in_grups($this->grupos_permitidos,$this->grupos)) 		//condicion de que sea vecino y recien inicie
+				if (!$_POST && $grup==false) 		//condicion de que sea vecino y recien inicie
 				{		
 					$Dni=$this->session->userdata('identity');	
+					$apellido=$this->session->userdata('apellido');
                     $cuil = $this->Personas_model->get(array(
 					'select'=>array('cuil'),
-					'where'=>(array("personas.dni=$Dni", "personas.apellido=$this->session->userdata('apellido')")))); 
+					'where' => array(
+						array('column' => "personas.dni", 'value' => $Dni),
+						array('column' => 'personas.apellido', 'value' => $apellido)
+					)));
+$cuil=get_object_vars($cuil[0])['cuil'];
+
 					if(!empty($cuil))
 					{
 					$this->agregarC($cuil);
@@ -501,8 +508,11 @@ class pedir_empleo  extends MY_Controller
 			$Dni=$this->session->userdata('identity');	//esto es redundante, puede no estar
                     $cuil = $this->Personas_model->get(array(
 					'select'=>array('cuil'),
-					'where'=>(array("personas.dni=$Dni", "personas.apellido=$this->session->userdata('apellido')")))); 
-					$cuil=$cuil[0];
+					'where' => array(
+						array('column' => "personas.dni", 'value' => $Dni),
+						array('column' => 'personas.apellido', 'value' => $apellido)
+					)));
+			$cuil=get_object_vars($cuil[0])['cuil'];
 		}
 		$empleo = $this->pedir_empleo_model->get(array('cuil' => $cuil));
 		if (empty($empleo))
@@ -621,14 +631,6 @@ $data['cuil']=$cuil;
 
 	public function ver($cuil = NULL)
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos) || $cuil == NULL/* || !ctype_digit($dni)*/)
-		{
-			$Dni=$this->session->userdata('identity');	//esto es redundante, puede no estar
-                    $cuil = $this->Personas_model->get(array(
-					'select'=>array('cuil'),
-					'where'=>(array("personas.dni=$Dni", "personas.apellido=$this->session->userdata('apellido')")))); 
-					$cuil=$cuil[0];
-		}
 		$empleo = $this->pedir_empleo_model->get(array('cuil' => $cuil));
 		if (empty($empleo))
 		{

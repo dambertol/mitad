@@ -93,7 +93,7 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
                         <div><div><div>
                         
                         <section>  
-<!--  ********************************aca ocurre la magia **************** ************************-->article
+<!--  ********************************aca ocurre la magia **************** ************************-->
                         <div class="row" id="row-persona">
                             <h2 class="text-center">Datos personales</h2>
                             <?php foreach ($field as $field): ?>
@@ -257,7 +257,7 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
                                     <label for="hijos" class="control-label col-sm-3">Hijos a cargo</label> 
                             <div class="col-sm-9">
                                         <?php echo $fields['hijos']['form']; ?> 
-                                        <input type='checkbox' name="hijos" class="selectpicker hijo" id="hijo" value="s">
+                                        <input type='checkbox' name="hijos" class="selectpicker form-control hijo" id="hijo" value="s">
                             </div>
 
                         </div> 
@@ -360,7 +360,7 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
                         <div class="change_col col-md-6 form-group">
                                     <label for="oficiosAA " class="control-label col-sm-3">oficios</label> 
                             <div class="col-sm-9">
-                                        <select name="oficiosAA " class="form-control selectpicker oficiosAA " id="oficiosAA " data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
+                                        <select name="oficiosAA " class="form-control selectpicker form-control oficiosAA " id="oficiosAA " data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                         <?php echo $fields['oficios']['form']; ?> 
                                         </select>
                             </div> 
@@ -387,13 +387,13 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
                             <div class="col-sm-9">
 
                                     <?php echo $fields['exmuni']['form']; ?> 
-                                    <input type='checkbox' name="exmuni" class="selectpicker exmun" id="exmimun" value="s">       
+                                    <input type='checkbox' name="exmuni" class="selectpicker form-control exmun" id="exmun" value="s">       
                             </div>
                         <div class="change_col col-md-6 form-group">
                             <label for="famimuni " class="control-label col-sm-3">Familiares en la municipalidad</label> 
                             <div class="col-sm-9">
                                     <?php echo $fields['famimuni']['form']; ?> 
-                                    <input type='checkbox' name="famimuni" class="selectpicker famimun" id="famimun" value="s">
+                                    <input type='checkbox' name="famimuni" class="selectpicker form-control famimun" id="famimun" value="s">
                             </div> 
                         </div>
                     </div>

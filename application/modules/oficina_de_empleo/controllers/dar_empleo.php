@@ -17,16 +17,16 @@ class dar_empleo  extends MY_Controller      //
 		parent::__construct();
 		$this->load->model('oficina_de_empleo/dar_empleo_model');    
 		$this->grupos_permitidos = array('admin','oficina_empleo_general' );
-		$this->grupos_solo_consulta = array('user','oficina_empleo');
+		$this->grupos_solo_consulta = array('user','oficina_empleo', 'tramites_online_publico');
 		// Inicializaciones necesarias colocar acá.
 	}
 
 	public function listar()   //************esta funcion fija los datos a mostrar y la opcion de busqueda, debera mostrar nombre,Dni y cv, solo si tiene cv cargado */
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos))
-		{
-			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
-		}
+		// if (!in_groups($this->grupos_permitidos, $this->grupos))
+		// {
+		// 	show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
+		// }
 
 		$tableData = array(
 				'columns' => array(

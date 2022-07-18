@@ -91,9 +91,9 @@ if (!function_exists('redirecciones_general_escritorio'))
             case 'reclamos_gis_user':
                 redirect('reclamos_gis/escritorio', 'refresh');
                 break;
-            case 'oficina_empleo': case 'oficina_empleo_general':    //editado por yoel grosso
-                    redirect('oficina_de_empleo/escritorio', 'refresh');
-                    break;               
+            // case 'oficina_empleo': case 'oficina_empleo_general':    //editado por yoel grosso
+            //         redirect('oficina_de_empleo/escritorio', 'refresh');
+            //         break;               
             case 'recursos_humanos_admin': case 'recursos_humanos_user': case 'recursos_humanos_publico': case 'recursos_humanos_director': case 'recursos_humanos_consulta_general': case 'recursos_humanos_bonos':
                 redirect('recursos_humanos/escritorio', 'refresh');
                 break;
@@ -185,8 +185,8 @@ if (!function_exists('load_permisos_nav'))
         $grupos_reclamos_major_admin = array('reclamos_major_admin');
         $grupos_reclamos_major_consulta = array('reclamos_major_consulta_general');
         $grupos_reclamos_gis_user = array('reclamos_gis_user');
-        $grupos_oficina_de_empleo = array('oficina_empleo'); //editado por yoel grosso
-        $grupos_oficina_de_empleo_general = array('oficina_empleo_general'); //editado por yoel grosso      
+        $grupos_oficina_de_empleo = array('oficina_empleo, oficina_empleo_general'); //editado por yoel grosso
+        $grupos_oficina_de_empleo_general = array('tramites_online_publico'); //editado por yoel grosso      
         $grupos_reclamos_gis_consulta = array('reclamos_gis_consulta_general');
         $grupos_recursos_humanos_consulta = array('recursos_humanos_consulta_general');
         $grupos_recursos_humanos_admin = array('recursos_humanos_admin');
@@ -2448,7 +2448,7 @@ if (!function_exists('load_permisos_nav'))
             if (!empty($c_empleo))
             {
                 $nav .= '<li class="current-page active active-init">';
-                $nav .= '<a class="active"><i class="fa fa-universal-acces"></i> Oficina de Empleo <span class="fa fa-universal-acces"></span></a>';
+                $nav .= '<a class="active"><i class="fa fa-user"></i> Oficina de Empleo <span class="fa fa-chevron-down"></span></a>';
                 $nav .= '<ul class="nav child_menu child_menu_open">';
                 $nav .= '<li' . (empty($c_empleo['escritorio']) ? '' : $c_empleo['escritorio']) . '><a href="oficina_de_empleo/escritorio">Inicio</a></li>';
                 $nav .= '<li' . (empty($c_empleo['pedir_empleo']) ? '' : $c_empleo['pedir_empleo']) . '><a href="oficina_de_empleo/pedir_empleo/listar">Carga de CV</a></li>';
@@ -2459,7 +2459,7 @@ if (!function_exists('load_permisos_nav'))
             else
             {
                 $nav .= '<li>';
-                $nav .= '<a><i class="fa fa-universal-acces"></i> Oficina de Empleo <span class="fa fa-universal-acces"></span></a>';
+                $nav .= '<a><i class="fa fa-user"></i> Oficina de Empleo <span class="fa fa-chevron-down"></span></a>';
                 $nav .= '<ul class="nav child_menu">';
                 $nav .= '<li><a href="oficina_de_empleo/escritorio">Inicio</a></li>';
                 $nav .= '<li><a href="oficina_de_empleo/pedir_empleo/listar">carga de CV</a></li>';
@@ -3358,7 +3358,7 @@ if (!function_exists('load_permisos_nav'))
 				$nav .= '<li><a href="tramites_online/tramites/agregar/52">Certificado de Provisión de Agua Potable</a></li>';
                 $nav .= '</ul>';
                 $nav .= '</li>'; 
-                //editado por yoel grosso
+                //editado por yoel grosso  de aca se da el boton del sidebar para los usuarios generales
                 $nav .= '<li>';
                 $nav .= '<a><i class="fa fa-user"></i>oficina de empleo<span class="fa fa-chevron-down"></span></a>';
                 $nav .= '<ul class="nav child_menu">';
@@ -4233,7 +4233,7 @@ if (!function_exists('load_permisos_escritorio'))
         $grupos_obrador = array('admin', 'obrador_user', 'obrador_consulta_general');
         $grupos_reclamos_major = array('admin', 'reclamos_major_admin', 'reclamos_major_consulta_general');
         $grupos_reclamos_gis = array('admin', 'reclamos_gis_user', 'reclamos_gis_consulta_general');
-        $grupos_oficina_de_empleo = array('admin', 'oficina_empleo', 'oficina_empleo_general','user');//editado por yoel grosso
+        $grupos_oficina_de_empleo = array('admin', 'oficina_empleo', 'oficina_empleo_general');//editado por yoel grosso
         $grupos_recursos_humanos = array('admin', 'recursos_humanos_admin', 'recursos_humanos_user', 'recursos_humanos_director', 'recursos_humanos_publico', 'recursos_humanos_consulta_general');
         $grupos_resoluciones = array('admin', 'resoluciones_user', 'resoluciones_consulta_general');
         $grupos_stock_informatica = array('admin', 'stock_informatica_user', 'stock_informatica_consulta_general');
@@ -4390,7 +4390,7 @@ if (!function_exists('load_permisos_escritorio'))
         {
             $accesos[$indice]['href'] = 'oficina_de_empleo/escritorio';
             $accesos[$indice]['title'] = 'Oficina de empleo';
-            $accesos[$indice]['icon'] = 'fa-universal-acces';
+            $accesos[$indice]['icon'] = 'fa-user';
             $indice++;
         }
         if (in_groups($grupos_recursos_humanos, $grupos))
@@ -5408,20 +5408,20 @@ if (!function_exists('load_permisos_reclamos_gis_escritorio'))
         return $accesos;
     }
 }
-//editado por yoel grosso
+//editado por yoel grosso 
 if (!function_exists('load_permisos_oficina_de_empleo_escritorio'))
 {
     function load_permisos_oficina_de_empleo_escritorio($grupos)
     {
         $accesos = array();
         $indice = 0;
-        $grupos_admin = array('admin', 'oficina_empleo_general','oficina_empleo');
+        $grupos_admin = array('admin', 'oficina_empleo_general','oficina_empleo','tramites_online_publico');
         $grupos_oficina_de_empleo = array('user');
         if (in_groups($grupos_admin, $grupos) || in_groups($grupos_oficina_de_empleo, $grupos))
         {
             $accesos[$indice]['href'] = 'oficina_de_empleo/pedir_empleo/listar';
             $accesos[$indice]['title'] = 'carga de cv';
-            $accesos[$indice]['icon'] = 'fa fa-universal-acces';
+            $accesos[$indice]['icon'] = 'fa fa-user';
             $indice++;
             $accesos[$indice]['href'] = 'oficina_de_empleo/dar_empleo/listar';
             $accesos[$indice]['title'] = 'ofrecer empleo';

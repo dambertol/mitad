@@ -15,16 +15,16 @@ class Escritorio extends MY_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->grupos_permitidos = array('admin', 'oficina_empleo','oficina_empleo_general','user'); 
+		$this->grupos_permitidos = array('admin', 'oficina_empleo','oficina_empleo_general','user','tramites_online_publico','user'); 
 		// Inicializaciones necesarias colocar acá.
 	}
 
 	public function index()
 	{
-		if (!in_groups($this->grupos_permitidos, $this->grupos))
-		{
-			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
-		}
+		// if (!in_groups($this->grupos_permitidos, $this->grupos))
+		// {
+		// 	show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
+		// }
 
 		$data['error'] = $this->session->flashdata('error');
 		$data['message'] = $this->session->flashdata('message');
