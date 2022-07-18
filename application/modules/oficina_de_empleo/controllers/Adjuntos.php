@@ -1,121 +1,4 @@
 <?php
-
-// defined('BASEPATH') OR exit('No direct script access allowed');
-
-// include_once(APPPATH . 'core/MY_Upload.php');
-
-// class Adjuntos extends MY_Upload
-// {
-
-//     /**
-//      * Controlador de Adjuntos
-//      * Autor: Leandro
-//      * Creado: 06/06/2019
-//      * Modificado: 28/04/2020 (Leandro)
-//      */
-//     function __construct()
-//     {
-//         parent::__construct();
-//        // $this->grupos_permitidos = array('admin', 'incidencias_admin', 'incidencias_user', 'incidencias_area', 'incidencias_consulta_general');
-// 		$this->grupos_permitidos = array('admin','oficina_empleo_general','oficina_empleo','user','tramites_online_publico');
-//         $this->modulo = 'oficina_de_empleo';
-//         // Inicializaciones necesarias colocar acá.
-//     }
-
-//     public function descargar($entidad_nombre = NULL, $archivo_id = NULL)
-//     {
-//         $this->entidad = $entidad_nombre;
-//         $this->archivo_id = $archivo_id;
-//         $this->entidad_id_nombre = 'id';
-
-//       //  $this->grupos_areas = array('incidencias_area');
-//       //  $this->grupos_tecnicos = array('incidencias_user');
-//         $this->load->model("$this->modulo/Adjuntos_model");
-//         $adjunto = $this->Adjuntos_model->get_one($this->archivo_id);
-//         if (empty($adjunto))
-//         {
-//             show_error('No se encontró el archivo solicitado', 404, 'Archivo no encontrado');
-//         }
-//         $this->load->model("$this->modulo/{$this->entidad}_model");
-//         $entidad = $this->{"{$this->entidad}_model"}->get_one($adjunto->{$this->entidad_id_nombre});
-//         // if (in_groups($this->grupos_areas, $this->grupos))
-//         // {
-//         //     $this->load->model("$this->modulo/Usuarios_areas_model");
-//         //     if (!$this->Usuarios_areas_model->in_area($this->session->userdata('user_id'), $entidad->area_id))
-//         //     {
-//         //         show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
-//         //     }
-//         // }
-//         // else if (in_groups($this->grupos_tecnicos, $this->grupos))
-//         // {
-//         //     $this->load->model("$this->modulo/Usuarios_sectores_model");
-//         //     if (!$this->Usuarios_sectores_model->in_sector($this->session->userdata('user_id'), $entidad->sector_id))
-//         //     {
-//         //         show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
-//         //     }
-//         //}
-
-//         parent::descargar();
-//     }
-
-//     public function ver($entidad_nombre = NULL, $directorio_nombre = NULL, $archivo_id = NULL)
-//     {
-//         if ($entidad_nombre === 'manuales')
-//         {
-//             $this->entidad = $entidad_nombre;
-//             $this->directorio = '';
-//             $this->archivo = $directorio_nombre;
-//             $this->verificar_archivo = FALSE;
-//         }
-//         else
-//         {
-//             $this->entidad = $entidad_nombre;
-//             $this->directorio = $directorio_nombre;
-//             $this->archivo = $archivo_id;
-//             $this->entidad_id_nombre = 'empleo_id';
-
-//            // $this->grupos_areas = array('incidencias_area');
-//           //  $this->grupos_tecnicos = array('incidencias_user');
-//             $this->load->model("$this->modulo/Adjuntos_model");
-//             $path = "uploads/$this->modulo/$this->entidad/$this->directorio/";
-//             $adjunto = $this->Adjuntos_model->get(array('ruta' => $path, 'nombre' => $this->archivo));
-//             if (empty($adjunto[0]))
-//             {
-//                 show_error('No se encontró el archivo solicitado', 404, 'Archivo no encontrado');
-//             }
-
-//             if ($directorio_nombre !== 'tmp')
-//             {
-//                 $this->load->model("$this->modulo/{$this->entidad}_model");
-//                 $entidad = $this->{"{$this->entidad}_model"}->get_one($adjunto[0]->{$this->entidad_id_nombre});
-
-             
-//             }
-//         }
-
-//         parent::ver();
-//     }
-
-//     public function modal_agregar($entidad_nombre = NULL)
-//     {
-//         $this->entidad = $entidad_nombre;
-//         $this->extensiones = '["pdf"]';
-//         parent::modal_agregar();
-//     }
-
-//     public function agregar($entidad_nombre = NULL)
-//     {
-//         $this->entidad = $entidad_nombre;
-//         $this->extensiones = 'pdf';
-//         parent::agregar();
-//     }
-// }
- 
-
-
-
-
-
 defined('BASEPATH') OR exit('No direct script access allowed');
 include_once(APPPATH . 'core/MY_Upload.php');
 class Adjuntos extends MY_Controller
@@ -123,7 +6,8 @@ class Adjuntos extends MY_Controller
 
 	/**
 	 * MY_Uploads
-	 *
+	 *metodo editado por yoel grosso
+	 * 
 	 * @package    CodeIgniter
 	 * @subpackage core
 	 * @category   controller
@@ -150,7 +34,6 @@ class Adjuntos extends MY_Controller
             $this->grupos_permitidos = array('admin','oficina_empleo_general','oficina_empleo','user','tramites_online_publico');
     $this->modulo = 'oficina_de_empleo';
 		$this->load->model("$this->modulo/Adjuntos_model");
-
 	}
 
     public function descargar($entidad_nombre = NULL, $archivo_id = NULL)
@@ -159,14 +42,10 @@ class Adjuntos extends MY_Controller
 		{
 			show_error('No tiene permisos para la acción solicitada', 500, 'Acción no autorizada');
 		}
-
         {
             $this->entidad = $entidad_nombre;
             $this->archivo_id = $archivo_id;
             $this->entidad_id_nombre = 'id';
-    
-          //  $this->grupos_areas = array('incidencias_area');
-          //  $this->grupos_tecnicos = array('incidencias_user');
             $this->load->model("$this->modulo/Adjuntos_model");
             $adjunto = $this->Adjuntos_model->get_one($this->archivo_id);
             if (empty($adjunto))
@@ -175,10 +54,6 @@ class Adjuntos extends MY_Controller
             }
             $this->load->model("$this->modulo/{$this->entidad}_model");
             $entidad = $this->{"{$this->entidad}_model"}->get_one($adjunto->{$this->entidad_id_nombre});
-
-
-
-
 		$adjunto = $this->Adjuntos_model->get_one($this->archivo_id);
 		if (empty($adjunto) || empty($adjunto->{$this->entidad_id_nombre}))
 		{
@@ -213,9 +88,6 @@ class Adjuntos extends MY_Controller
             $this->directorio = $directorio_nombre;
             $this->archivo = $archivo_id;
             $this->entidad_id_nombre = 'empleo_id';
-
-           // $this->grupos_areas = array('incidencias_area');
-          //  $this->grupos_tecnicos = array('incidencias_user');
             $this->load->model("$this->modulo/Adjuntos_model");
             $path = "uploads/$this->modulo/$this->entidad/$this->directorio/";
             $adjunto = $this->Adjuntos_model->get(array('ruta' => $path, 'nombre' => $this->archivo));
@@ -228,8 +100,6 @@ class Adjuntos extends MY_Controller
             {
                 $this->load->model("$this->modulo/{$this->entidad}_model");
                 $entidad = $this->{"{$this->entidad}_model"}->get_one($adjunto[0]->{$this->entidad_id_nombre});
-
-             
             }
         }
 
@@ -284,10 +154,7 @@ class Adjuntos extends MY_Controller
 		$fake_model->fields = array(
 				'path' => array('label' => 'Archivo', 'type' => 'file'),
 				'tipo_adjunto' => array('label' => 'Tipo', 'input_type' => 'combo', 'type' => 'bselect', 'required' => TRUE),
-			//	'descripcion' => array('label' => 'Descripción', 'maxlength' => '100')
 		);
-		//$this->load->model("$this->modulo/Tipos_adjuntos_model");
-	//	$this->array_tipos_control = $array_tipo_adjunto = $this->get_array('Tipos_adjuntos', 'nombre');
 		$this->array_tipo_adjunto_control = $array_tipo_adjunto =$this->Adjuntos_model->get_tipo_adjunto();
 
 		$data['extensiones'] = $this->extensiones;
@@ -310,14 +177,40 @@ class Adjuntos extends MY_Controller
 			return $this->modal_error('No tiene permisos para la acción solicitada', 'Acción no autorizada');
 		}
 
+		$adjunto = $this->Adjuntos_model->get(array(
+			'documento_id' => $documento_id
+		));
+		if(!empty($adjunto)){
+			if($_POST){
+			foreach ($adjunto as $key => $value) {
+				if($value->tipo_id==$this->input->post('tipo_adjunto')){
+					$conf= "<script type='text/javascript'>confirm('Si continua el archivo anterior será borrado')</script>";
+					echo $conf;
+					if($conf==true){
+						$viejo_archivo = $value->ruta . $value->nombre;
+										$trans_ok &= $this->Adjuntos_model->delete(array('id' => $value->id), FALSE);
+										$borrado = unlink($viejo_archivo); //No funciona directo a $trans_ok 
+										if (!$borrado)
+										{
+											$trans_ok = FALSE;
+										}
+									
+					}else{
+						exit;
+					}
+
+				}
+			}
+
+			}
+		}
+
+
 		$fake_model = new stdClass();
 		$fake_model->fields = array(
 				'path' => array('label' => 'Archivo', 'type' => 'file'),
 				'tipo_adjunto' => array('label' => 'Tipo', 'input_type' => 'combo', 'type' => 'bselect', 'required' => TRUE),
-			//	'descripcion' => array('label' => 'Descripción', 'maxlength' => '100')
 		);
-		//$this->load->model("$this->modulo/Tipos_adjuntos_model");
-		//$this->array_tipo_adjunto_control = $array_tipo_adjunto = $this->get_array('Tipos_adjuntos', 'nombre');tipos
 		$this->array_tipo_adjunto_control = $array_tipo_adjunto = $this->Adjuntos_model->get_tipo_adjunto();
 
 		$this->set_model_validation_rules($fake_model);
@@ -328,7 +221,7 @@ class Adjuntos extends MY_Controller
 
 			if (!empty($_FILES['path']['name']))
 			{
-				$config['upload_path'] = "uploads/$this->modulo/$this->entidad/tmp/";
+				$config['upload_path'] = "uploads/$this->modulo/$this->entidad/$documento_id/";
 				if (!file_exists($config['upload_path']))
 				{
 					mkdir($config['upload_path'], 0755, TRUE);
@@ -357,15 +250,9 @@ class Adjuntos extends MY_Controller
 				$this->db->trans_begin();
 				$trans_ok = TRUE;
 
-				// $entidad_id = $this->input->post('entidad_id');
-				// if (empty($entidad_id))
-				// {
-				// 	$entidad_id = 'NULL';
-				// }
-
 				$trans_ok &= $this->Adjuntos_model->create(array(
 						'tipo_id' => $this->input->post('tipo_adjunto'),
-						'documento_id' => $documento_id,//$this->input->post('documento_id'),
+						'documento_id' => $documento_id,
 						'nombre' => $upload_data['file_name'],
 						'ruta' => $config['upload_path'],
 						'tamanio' => round($upload_data['file_size'], 2),

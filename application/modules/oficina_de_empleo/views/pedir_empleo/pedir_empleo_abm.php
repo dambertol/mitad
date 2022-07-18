@@ -23,12 +23,19 @@
     }
 </style>
 <script>
-       var empleo_id = '<?php echo!empty($empleo->cuil) ? $empleo->cuil : 0; ?>';
+    	var csrfData = '<?php echo $this->security->get_csrf_hash(); ?>';
+	$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+		event.preventDefault();
+		$(this).ekkoLightbox({
+			alwaysShowClose: true
+		});
+	});
+       var empleo_id = '<?php echo!empty($cuil) ? $cuil : 0; ?>';
 function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
         if (empleo_id !== undefined) {
             var name = 'adjunto_eliminar_existente';
         } else {
-            var name = 'adjunto_eliminar';
+            var name = 'adjunto_eliminar_existente';
         }
         Swal.fire({
             title: 'Confirmar',
@@ -44,11 +51,12 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.value) {
-                $('#adjuntos-container').append("<input type='hidden' name='" + name + "[" + adjunto_id + "]' value='" + adjunto_nombre + "'>");
-                $('#adjunto_' + adjunto_id).remove();
+                $('#adjunto_' + adjunto_id).find('input').attr('name', name+'['+adjunto_id+']');
+                $('#adjunto_' + adjunto_id).attr('style','display:none');
             }
-        });
-    }
+        })
+    };
+
 </script>
 <?php if (!empty($error)) : ?>
     <div class="alert alert-danger alert-dismissible fade in alert-fixed" role="alert">
@@ -68,7 +76,7 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
 <?php endif; ?>
 <div class="row">
     <div class="col-xs-12">
-        <div class="x_panel">
+        <article class="x_panel">
             <div class="x_title">
                 <h2><?php echo (!empty($title_view)) ? $title_view : 'pedir_empleo'; ?></h2>
                 <?php if (!empty($audi_modal)): ?>
@@ -81,301 +89,337 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
             <div class="x_content">
                 <?php $data_submit = ($txt_btn === 'Eliminar') ? array('class' => 'btn btn-danger btn-sm', 'title' => $txt_btn) : array('class' => 'btn btn-primary btn-sm', 'title' => $txt_btn); ?>
                 <?php echo form_open(uri_string(), 'class="form-horizontal"'); ?>
-                <div class="row">
-                    
-<!--  ********************************aca ocurre la magia **************** ************************-->
-                    <div class="row" id="row-persona">
-                        <h2 class="text-center">Datos personales</h2>
-                        <?php foreach ($field as $field): ?>
-                            <div class="change_col col-md-6 form-group">
-                                <?php echo $field['label']; ?> 
-                                <?php echo $field['form']; ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                    
-                    
-                    <div class="row" id="row-domicilio">
-                        <br />
-                        <h2 class="text-center form-group">Datos domilicio</h2>
-                        <?php foreach ($fields_domicilio as $field_domicilio): ?>
-                        <div class="change_col col-md-6 form-group">
-                                <?php echo $field_domicilio['label']; ?> 
-                                <?php echo $field_domicilio['form']; ?>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                <!--/div-->
-
-                    <div class="ln_solid"></div>
                     <div class="row">
-                        <div class="border-group form-gruop">
-                        <div class="change_col col-md-6 form-group">
-                            <div class="dropdown bootstrap-checkbox form-control bs3">
-                                        <?php echo $fields['capacitacion']['label']; ?> 
-                                        <input type='checkbox' name="capacitacion" class="selectpicker" id="capacitacion" value="s">
-                            </div>
-                        </div>
-
-                        <div class="change_col col-md-6 form-group">
-                                <label for="horAArio_cap" class="control-label col-sm-3">Horario disponible</label> 
-                            <div class="col-sm-9">
-                                <div class="dropdown bootstrap-select form-control bs3">
-                                    <select name="horAArio_cap" class="form-control selectpicker horAArio_cap" id="horAArio_cap" data-selected-text-format="count>5" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
-                                    <?php echo $fields['horario_cap']['form']; ?> 
-                                    </select>
+                        <div><div><div>
+                        
+                        <section>  
+<!--  ********************************aca ocurre la magia **************** ************************-->article
+                        <div class="row" id="row-persona">
+                            <h2 class="text-center">Datos personales</h2>
+                            <?php foreach ($field as $field): ?>
+                                <div class="change_col col-md-6 form-group">
+                                    <?php echo $field['label']; ?> 
+                                    <?php echo $field['form']; ?>
                                 </div>
+                            <?php endforeach; ?>
+                        </div>
+                    
+                    
+                        <div class="row" id="row-domicilio">
+                            <br />
+                            <h2 class="text-center form-group">Datos domilicio</h2>
+                            <?php foreach ($fields_domicilio as $field_domicilio): ?>
+                            <div class="change_col col-md-6 form-group">
+                                    <?php echo $field_domicilio['label']; ?> 
+                                    <?php echo $field_domicilio['form']; ?>
                             </div>
-                        </div>
+                            <?php endforeach; ?>
+                        <!-- </div> -->
+</section>
+<section>
 
-                        <div class="change_col col-md-6 form-group">
-                                    <?php echo $fields['intereses_cap']['label']; ?> 
-                                    <?php echo $fields['intereses_cap']['form']; ?> 
-                        </div>
-                    </div>
-            <!--/div-->
+
+
 
                     <div class="ln_solid"></div>
+
+
+
                     <div class="row">
                         <div class="change_col col-md-6 form-group">
-                                        <?php echo $fields['busca_empleo']['label']; ?> 
-                                        <input type='checkbox' name="busca_empleo" class="selectpicker" id="busca_empleo" value="s">
+                                <label for="capacitacion" class="control-label col-sm-3">Capacitacion</label> 
+                            <div class="col-sm-9">
+                                <?php echo $fields['capacitacion']['form']; ?> 
+                                <input type='checkbox' name="capacitacion" class="selectpicker bootstrap-checkbox capacitacio form-control" id="capacitacio" value="s">
+                            </div>
                         </div>
                         
                         <div class="change_col col-md-6 form-group">
+                                <label for="horAArio_cap" class="control-label col-sm-3">Horario disponible</label> 
+                            <div class="col-sm-9">
+                                        <select name="horAArio_cap" class="form-control selectpicker horAArio_cap" id="horAArio_cap" data-selected-text-format="count>5" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
+                                        <?php echo $fields['horario_cap']['form']; ?> 
+                                        </select>
+                                    
+                            </div>
+                        </div>
+
+                        <div class="change_col col-md-6 form-group">
+                                        <?php echo $fields['intereses_cap']['label']; ?> 
+                                        <?php echo $fields['intereses_cap']['form']; ?> 
+                        </div>
+                    <!-- </div> -->
+</section>     
+                <section>
+
+
+
+
+
+                    <div class="ln_solid"></div>
+                    
+                    
+                    
+                    
+                    
+                  
+                    <div class="row">
+                        <div class="change_col col-md-6 form-group">
+                            <label for="busca_empleo" class="control-label col-sm-3">Busqueda de empleo</label> 
+                            <div class="col-sm-9">
+                                        <?php echo $fields['busca_empleo']['form']; ?> 
+                                        <input type='checkbox' name="busca_empleo" class="selectpicker form-control bootstrap-checkbox busca_emple" id="busca_emple" value="s">
+                            </div>
+                        </div>
+
+                        <div class="change_col col-md-6 form-group">
                                         <label for="interes_lAAb" class="control-label col-sm-3">Intereses laborales</label> 
                             <div class="col-sm-9">
-                                <div class="dropdown bootstrap-select form-control bs3">
                                             <select name="interes_lAAb" class="form-control selectpicker interes_lAAb" id="interes_lAAb" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                             <?php echo $fields['interes_lab']['form']; ?> 
                                             </select>
-                                </div> 
+                                 
                             </div>
                         </div>
+
                         <div class="change_col col-md-6 form-group">
                                         <label for="disponib_lAAb" class="control-label col-sm-3">Disponibilidad horaria</label> 
                             <div class="col-sm-9">
-                                <div class="dropdown bootstrap-select form-control bs3">
                                             <select name="disponib_lAAb" class="form-control selectpicker disponib_lAAb" id="disponib_lAAb" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                             <?php echo $fields['disponib_lab']['form']; ?> 
                                             </select>
-                                </div> 
                             </div>
                         </div>
 
                         <div class="change_col col-md-6 form-group">
                                         <label for="condicAA " class="control-label col-sm-3">condiciones especiales de trabajo</label> 
                             <div class="col-sm-9">
-                                <div class="dropdown bootstrap-select form-control bs3">
+                                    
                                             <select name="condicAA " class="form-control selectpicker condicAA " id="condicAA " data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                             <?php echo $fields['condic']['form']; ?> 
                                             </select>
-                                </div> 
-                            </div>
-                        </div>
-                <!--/div-->
+                            </div> 
+                         </div> 
+                    <!-- </div>  -->
+</section> 
+<section>
 
-                        <div class="ln_solid"></div>
 
-                        <div class="row">
-                            <div class="border-group form-gruop">
-                                <div class="change_col col-md-6 form-group">
-                                            <label for="movilidAAd" class="control-label col-sm-3">Vehiculo propio</label> 
-                                    <div class="col-sm-9">
-                                        <div class="dropdown bootstrap-select form-control bs3">
+
+
+
+
+                    <div class="ln_solid"></div>
+
+
+
+
+                    <div class="row">
+
+                        <div class="change_col col-md-6 form-group">
+                            <label for="movilidAAd" class="control-label col-sm-3">Vehiculo propio</label> 
+                            <div class="col-sm-9">
                                                 <select name="movilidAAd" class="form-control selectpicker movilidAAd" id="movilidAAd" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                                 <?php echo $fields['movilidad']['form']; ?> 
                                                 </select>
-                                        </div> 
-                                    </div>
-                                </div>
+                            </div> 
+                        </div>
                             
-                                <div class="change_col col-md-6 form-group">
+                        <div class="change_col col-md-6 form-group">
                                             <label for="movil_cAArnet" class="control-label col-sm-3">Carnet de conducir</label> 
-                                    <div class="col-sm-9">
-                                        <div class="dropdown bootstrap-select form-control bs3">
-                                                <select name="movil_cAArnet" class="form-control selectpicker movil_cAArnet" id="movil_cAArnet" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
+                            <div class="col-sm-9">
+                                <select name="movil_cAArnet" class="form-control selectpicker movil_cAArnet" id="movil_cAArnet" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                                 <?php echo $fields['movil_carnet']['form']; ?> 
                                                 </select>
-                                        </div> 
-                                    </div>
-                                </div>
-                            </div>
-                <!--/div--> 
+                            </div> 
+                        </div>
+                    <!-- </div> -->
+</section>
+                    <section> 
 
-                            <div class="ln_solid"></div>
-                            <div class="row">
-                                <div class="border-group">
-                                    <div class="change_col col-md-6 form-group">
-                                                <label for="discapAAcidad" class="control-label col-sm-3">Tipo de discapacidad</label> 
-                                        <div class="col-sm-9">
-                                            <div class="dropdown bootstrap-select form-control bs3">
+
+
+                    <div class="ln_solid"></div>
+                    
+                                 
+                    <div class="row">
+
+                        <div class="change_col col-md-6 form-group">
+                                <label for="discapAAcidad" class="control-label col-sm-3">Tipo de discapacidad</label> 
+                            <div class="col-sm-9">
                                                     <select name="discapAAcidad" class="form-control selectpicker discapAAcidad" id="discapAAcidad" data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                                     <?php echo $fields['discapacidad']['form']; ?> 
                                                     </select>
-                                            </div> 
-                                        </div>
-                                    </div>
-                                    <div class="change_col col-md-6 form-group">
-                                                <?php echo $fields['cud']['label']; ?> 
-                                                <?php echo $fields['cud']['form']; ?> 
-                                    </div>
-                                </div> 
+                            </div> 
+                        </div>
+
+                        <div class="change_col col-md-6 form-group">
+                                    <label for="hijos" class="control-label col-sm-3">Hijos a cargo</label> 
+                            <div class="col-sm-9">
+                                        <?php echo $fields['hijos']['form']; ?> 
+                                        <input type='checkbox' name="hijos" class="selectpicker hijo" id="hijo" value="s">
                             </div>
-                            <div class="ln_solid"></div>
-                                <div class="row">
-                                <div class="change_col col-md-6 form-group">
-                                            <?php echo $fields['estudio']['label']; ?> 
-                                            <?php echo $fields['estudio']['form']; ?> 
-                                </div>
 
-                                <div class="change_col col-md-6 form-group">
-                                            <label for="estudiosOtAA " class="control-label col-sm-3">Titulo secundario</label> 
-                                    <div class="col-sm-9">
-                                        <div class="dropdown bootstrap-select form-control bs3">
-                                                <select name="estudiosOtAA " class="form-control selectpicker titsecundario" id="estudiosOtAA " data-live-search="true" title="-- Seleccionar --" tabindex="null" >
-                                                <?php echo $fields['estudiosOt']['form']; ?> 
-                                                </select>
-                                        </div> 
-                                    </div>
-                                </div>
-
-                                <div class="change_col col-md-6 form-group">
-                                            <label for="grAAdo" class="control-label col-sm-3">Titulo de grado</label> 
-                                    <div class="col-sm-9">
-                                        <div class="dropdown bootstrap-select form-control bs3">
-                                                <select name="grAAdo" class="form-control selectpicker grAAdo" id="grAAdo" data-live-search="true" title="-- Seleccionar --" tabindex="null" >
-                                                <?php echo $fields['grado']['form']; ?> 
-                                                </select>
-                                        </div> 
-                                    </div>
-                                </div>
+                        </div> 
+                    <!-- </div> -->
+                            </section> 
+                    <section> 
+                    
+                    
+                    
+                    <div class="ln_solid"></div>
                                 
-                                <div class="change_col col-md-6 form-group">
+                    
+                    
+                    <div class="row">
+                        <div class="change_col col-md-6 form-group">
+                                                <?php echo $fields['estudio']['label']; ?> 
+                                                <?php echo $fields['estudio']['form']; ?> 
+                        </div>
+
+                        <div class="change_col col-md-6 form-group">
+                                                <label for="estudiosOtAA " class="control-label col-sm-3">Titulo secundario</label> 
+                            <div class="col-sm-9">
+                                                    <select name="estudiosOtAA " class="form-control selectpicker titsecundario" id="estudiosOtAA " data-live-search="true" title="-- Seleccionar --" tabindex="null" >
+                                                    <?php echo $fields['estudiosOt']['form']; ?> 
+                                                    </select>
+                            </div> 
+                        </div>
+
+                        <div class="change_col col-md-6 form-group">
+                                                <label for="grAAdo" class="control-label col-sm-3">Titulo de grado</label> 
+                            <div class="col-sm-9">
+                                                    <select name="grAAdo" class="form-control selectpicker grAAdo" id="grAAdo" data-live-search="true" title="-- Seleccionar --" tabindex="null" >
+                                                    <?php echo $fields['grado']['form']; ?> 
+                                                    </select>
+                            </div> 
+                        </div>
+                                
+                        <div class="change_col col-md-6 form-group">
                                             <label for="grAAdoo" class="control-label col-sm-3">Rubro</label> 
-                                    <div class="col-sm-9">
-                                        <div class="dropdown bootstrap-select form-control bs3">
+                            <div class="col-sm-9">
                                                 <select name="grAAdoo" class="form-control selectpicker grAAdoo" id="grAAdoo" data-live-search="true" title="-- Seleccionar --" tabindex="null" >
                                                 <?php echo $fields['gradoo']['form']; ?> 
                                                 </select>
-                                        </div> 
-                                    </div>
-                        <!--/div-->
+                            </div> 
+                        </div>
+                    <!-- </div> -->
+</section>
+<section>
 
-                        <div class="border-group form-gruop">
+
+                    <div class="ln_solid"></div>
                         
-                        <div id="poliglota">
-                            <div class="change_col col-md-6 form-group" >
+
+
+                    <div id="poliglota" class="row">
+                        <div class="change_col col-md-6 form-group" >
                                 <label for="idioma" class="control-label col-sm-3">Idiomas</label> 
-                                <div class="col-sm-9">
-                                    <div class="dropdown bootstrap-select form-control bs3">
-                                        <select name="idioma" class="form-control selectpicker idiomas idioma" id="idioma" data-live-search="true" title="-- Seleccionar --" tabindex="null">
-                                            <option class="bs-title-option" value=""></option>
+                            <div class="col-sm-9">
+                                        <select name="idioma" class="form-control selectpicker idiomass idioma" id="idioma" data-live-search="true" title="-- Seleccionar --" tabindex="null">
+                                            <?php echo $fields['idiomas']['form']; ?>
                                         </select>
-                                    </div> 
-                                </div>
+                            </div> 
+                        
                                 <label for="idiomaN" class="control-label col-sm-3">Nivel</label> 
-                                <div class="col-sm-9">
+                            <div class="col-sm-9">
                                     <input name="idiomaN" value="" tipe="number" maxlength="1" id="idiomaN" class="form-control Nidioma idioma">
                                     <button id="addCampo" type="button" class="btn btn-info">Agregar idioma</button>
-                                </div>
                             </div>
                         </div>
                     </div>
-                <!--/div-->
-                <div class="border-group form-gruop">
-                    <div id="tecno">
+
+
+
+                    <div id="tecno" class="row">
                         <div class="change_col col-md-6 form-group" >
                                 <label for="computacio" class="control-label col-sm-3">programas de computacion</label> 
                             <div class="col-sm-9">
-                                <div class="dropdown bootstrap-select form-control bs3">
-                                        <select name="computacio" class="form-control selectpicker computacio" id="computacio" data-live-search="true" title="-- Seleccionar --" tabindex="null">
-                                            <option class="bs-title-option" value=""></option>
+                                        <select name="computacio" class="form-control selectpicker computacio computacioss" id="computacio" data-live-search="true" title="-- Seleccionar --" tabindex="null">
+                                        <?php echo $fields['computacion']['form']; ?>
                                         </select>
-                                </div> 
-                            </div>
+                            </div> 
+                        
                                 <label for="computacioN" class="control-label col-sm-3">Nivel</label> 
                             <div class="col-sm-9">
-                                    <input name="computacioN" value="" tipe="number" maxlength="1" id="computacioN" class="form-control Ncomputacio">
+                                    <input name="computacioN" value="" tipe="number" maxlength="1" id="computacioN" class="form-control computacio Ncomputacio">
                                     <button id="addCampoCompu" type="button" class="btn btn-info">Agregar programa</button>
-                            </div>
+                            </div>       
                         </div>
                     </div>
 
-                    <div class="change_col col-md-6 form-group">
-                                    <?php echo $fields['cursos']['label']; ?> 
-                                    <?php echo $fields['cursos']['form']; ?> 
+                    <div class="row">
+                        <div class="change_col col-md-6 form-group">
+                                        <?php echo $fields['cursos']['label']; ?> 
+                                        <?php echo $fields['cursos']['form']; ?> 
+                        </div>
                     </div>
-                    
-                    <div class="change_col col-md-6 form-group">
-                                <label for="oficiosAA " class="control-label col-sm-3">oficios</label> 
-                        <div class="col-sm-9"><div class="dropdown bootstrap-select form-control bs3">
+</section>
+<section>
+                    <div calss="row">
+                        <div class="change_col col-md-6 form-group">
+                                    <label for="oficiosAA " class="control-label col-sm-3">oficios</label> 
+                            <div class="col-sm-9">
                                         <select name="oficiosAA " class="form-control selectpicker oficiosAA " id="oficiosAA " data-live-search="true" title="-- Seleccionar --" tabindex="null" multiple>
                                         <?php echo $fields['oficios']['form']; ?> 
                                         </select>
-                        </div> 
-                    </div>
-                </div>
+                            </div> 
+                        </div>
 
-                <div class="change_col col-md-6 form-group">
+                        <div class="change_col col-md-6 form-group">
                                     <?php echo $fields['experiencia']['label']; ?> 
                                     <?php echo $fields['experiencia']['form']; ?> 
-                </div>
-            <!--/div-->
-            <div class="ln_solid"></div>
-                <div class="row">
-                    <div class="change_col col-md-6 form-group">
-                                    <?php echo $fields['exmuni']['label']; ?> 
-                                    <input type='checkbox' name="busca_empleo" class="selectpicker" id="busca_empleo" value="s">       
-                    </div>
-                    <div class="change_col col-md-6 form-group">
-                                    <?php echo $fields['famimuni']['label']; ?> 
-                                    <input type='checkbox' name="busca_empleo" class="selectpicker" id="busca_empleo" value="s">
-                    </div> 
-                </div>
+                        </div>
+                    <!-- </div> -->
+</section>
 
-                <div class="ln_solid"></div>
-                <div class="row">
-                    <div class="group-border ">
+                    <section>
+                        
+
+
+                    <div class="ln_solid"></div>
+                    
+                    
+                    
+                    <div class="row">
+                        <div class="change_col col-md-6 form-group">
+                            <label for="exmuni " class="control-label col-sm-3">Trabajó en la municipalidad</label> 
+                            <div class="col-sm-9">
+
+                                    <?php echo $fields['exmuni']['form']; ?> 
+                                    <input type='checkbox' name="exmuni" class="selectpicker exmun" id="exmimun" value="s">       
+                            </div>
+                        <div class="change_col col-md-6 form-group">
+                            <label for="famimuni " class="control-label col-sm-3">Familiares en la municipalidad</label> 
+                            <div class="col-sm-9">
+                                    <?php echo $fields['famimuni']['form']; ?> 
+                                    <input type='checkbox' name="famimuni" class="selectpicker famimun" id="famimun" value="s">
+                            </div> 
+                        </div>
+                    </div>
+
+
+                    <div class="ln_solid"></div>
+
+
+
+
+
+                    <div class="row">
                         <div class="change_col col-md-9 form-group">
                                     <?php echo $fields['aclaraciones']['label']; ?> 
                                     <?php echo $fields['aclaraciones']['form']; ?> 
                         </div>
-                        <!-- <div class="change_col col-md-6 form-group">
-                                    <?php //echo $fields['pdf']['label']; ?> 
-                                    <?php //echo $fields['pdf']['form']; ?> 
-                        </div> -->
                     </div>
+</section>
+  
+<section>
+                  
 
-                </div>
+
+
+
                 <div class="ln_solid otro"></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -386,196 +430,68 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
                     </h2>
                     <div id="adjuntos-container" class="col-sm-12">
 
-						<?php if (!isset($empleo) || empty($empleo->pdf)): ?>
-							<div class="text-center" style="margin-bottom:10px;">
-								<a class="btn btn-primary btn-sm" href="oficina_de_empleo/Adjuntos/modal_agregar/pedir_empleo/<?php echo $empleo->cuil; ?>" data-remote="false" data-toggle="modal" data-target="#remote_modal" title="Agregar adjunto"><i class="fa fa-plus"></i> Agregar adjunto</a>
-							</div>
-						<?php else: ?>
+                    <?php if (!empty($txt_btn) && ($txt_btn === 'Agregar'|| $txt_btn ==='Editar')): ?>
 							 <div class="text-center" style="margin-bottom:10px;">
-								<a class="btn btn-primary btn-sm" href="oficina_de_empleo/Adjuntos/modal_agregar/pedir_empleo/<?php echo $empleo->cuil; ?>" data-remote="false" data-toggle="modal" data-target="#remote_modal" title="Agregar adjunto"><i class="fa fa-plus"></i> Agregar adjunto</a>
+							<a class="btn btn-primary btn-sm" href="oficina_de_empleo/Adjuntos/modal_agregar/pedir_empleo/<?php echo $cuil; ?>" data-remote="false" data-toggle="modal" data-target="#remote_modal" title="Agregar adjunto"><i class="fa fa-plus"></i> Agregar adjunto</a>
 							</div> 
-						<?php endif; ?>
+					<?php endif; ?>
 
                         <?php if (!empty($array_adjuntos)): ?>
                             <?php foreach ($array_adjuntos as $Adjunto): ?>
-                                <?php if (!array_key_exists($Adjunto->id, $adjuntos_eliminar_existente_post)): ?>
-                                    <?php $show_preview = TRUE; ?>
-                                    <?php if ($Adjunto->extension === 'jpg' || $Adjunto->extension === 'jpeg' || $Adjunto->extension === 'png'): ?>
-                                        <?php $preview = '<img style="width: 100%; display: block;" src="' . $Adjunto->ruta . $Adjunto->nombre . '" alt="' . $Adjunto->tipo_adjunto . '">'; ?>
-                                        <?php $extra = ''; ?>
-                                    <?php elseif ($Adjunto->extension === 'pdf'): ?>
+                                    
+                                    <?php if ($Adjunto->extension === 'pdf'): ?>
                                         <?php $preview = '<object type="application/pdf" data="' . $Adjunto->ruta . $Adjunto->nombre . '#toolbar=0" width="100%" height="170">PDF</object>'; ?>
                                         <?php $extra = ' data-type="url" data-disable-external-check="true"'; ?>
-                                    <?php else: ?>
-                                        <?php $preview = '<img src="img/generales/nopreview.png" alt="Sin Vista Previa">'; ?>
-                                        <?php $extra = ''; ?>
-                                        <?php $show_preview = FALSE; ?>
                                     <?php endif; ?>
                                     <div class="col-lg-3 col-md-4 col-sm-6 adjunto_<?php echo $Adjunto->tipo_id; ?>" id="adjunto_<?php echo $Adjunto->id; ?>">
+                                    <input  type="hidden" name='adjunto_agregar[<?php echo $Adjunto->id; ?>]' value='<?php echo $Adjunto->nombre; ?>'> 
                                         <div class="thumbnail">
                                             <div class="image view view-first">
                                                 <?php echo $preview; ?>
                                                 <div class="mask">
                                                     <p>&nbsp;</p>
                                                     <div class="tools tools-bottom">
-                                                        <?php if ($show_preview): ?>
-                                                            <a href="<?php echo $Adjunto->ruta . $Adjunto->nombre; ?>" title="Ver Adjunto" data-toggle="lightbox"<?php echo $extra; ?> data-gallery="empleo-gallery" data-title="<?php echo "$Adjunto->tipo_adjunto "; ?>"><i class="fa fa-search"></i></a>
-                                                        <?php endif; ?>
-                                                        <?php if (empty($txt_btn) || $txt_btn === 'Editar' || $txt_btn === 'Anular'): ?>
-                                                            <a href="oficina_de_empleo/adjuntos/descargar/empleo/<?php echo $Adjunto->id; ?>"  title="Descargar Adjunto"><i class="fa fa-download"></i></a>
-                                                        <?php endif; ?>
-                                                        <?php if (!empty($txt_btn) && $txt_btn === 'Editar' && $edita_adjuntos): ?>
-                                                            <a href="javascript:eliminar_adjunto(<?php echo $Adjunto->id; ?>, '<?php echo $Adjunto->nombre; ?>', <?php echo $empleo->id; ?>)" title="Eliminar adjunto"><i class="fa fa-remove"></i></a>
-                                                        <?php endif; ?>
+                                                           <a href="<?php echo $Adjunto->ruta . $Adjunto->nombre; ?>" title="Ver Adjunto" data-toggle="lightbox"<?php echo $extra; ?> data-gallery="empleo-gallery" data-title="<?php echo "$Adjunto->tipo_adjunto "; ?>"><i class="fa fa-search"></i></a>
+                                                            <a href="oficina_de_empleo/adjuntos/descargar/pedir_empleo/<?php echo $Adjunto->id; ?>"  title="Descargar Adjunto"><i class="fa fa-download"></i></a>
+                                                            <a href="javascript:eliminar_adjunto(<?php echo $Adjunto->id; ?>, '<?php echo $Adjunto->nombre; ?>', <?php echo $cuil; ?>)" title="Eliminar adjunto"><i class="fa fa-remove"></i></a>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="caption" style="height:60px;">
                                                 <p>
                                                     <b><?php echo $Adjunto->tipo_adjunto; ?></b><br>
-                                                    <?php //echo $Adjunto->descripcion;eliminar ?>
                                                 </p>
                                             </div>
                                         </div>
                                     </div>
-                                <?php endif; ?>
                             <?php endforeach; ?>
                         <?php endif; ?>
-                        <?php if (!empty($array_adjuntos_agregar)): ?>
-                            <?php foreach ($array_adjuntos_agregar as $Adjunto): ?>
-                                <?php $show_preview = TRUE; ?>
-                                <?php if ($Adjunto->extension === 'jpg' || $Adjunto->extension === 'jpeg' || $Adjunto->extension === 'png'): ?>
-                                    <?php $preview = '<img style="width: 100%; display: block;" src="' . $Adjunto->ruta . $Adjunto->nombre . '" alt="' . $Adjunto->tipo_adjunto . '">'; ?>
-                                <?php elseif ($Adjunto->extension === 'pdf'): ?>
-                                    <?php $preview = '<object type="application/pdf" data="' . $Adjunto->ruta . $Adjunto->nombre . '#toolbar=0" width="100%" height="170">PDF</object>'; ?>
-                                <?php else: ?>
-                                    <?php $preview = '<img src="img/generales/nopreview.png" alt="Sin Vista Previa">'; ?>
-                                    <?php $show_preview = FALSE; ?>
-                                <?php endif; ?>
-                                <div class="col-lg-3 col-md-4 col-sm-6 adjunto_<?php echo $Adjunto->tipo_id; ?>" id="adjunto_<?php echo $Adjunto->id; ?>">
-                                    <input type='hidden' name='adjunto_agregar[<?php echo $Adjunto->id; ?>]' value='<?php echo $Adjunto->nombre; ?>'>
-                                    <div class="thumbnail">
-                                        <div class="image view view-first">
-                                            <?php echo $preview; ?>
-                                            <div class="mask">
-                                                <p>&nbsp;</p>
-                                                <div class="tools tools-bottom">
-                                                    <?php if ($show_preview): ?>
-                                                        <a href="<?php echo $Adjunto->ruta . $Adjunto->nombre; ?>" title="Ver Adjunto" data-toggle="lightbox" data-gallery="empleo-gallery" data-title="<?php echo "$Adjunto->tipo_adjunto <span class='small'>$Adjunto->descripcion</span>"; ?>"><i class="fa fa-search"></i></a>
-                                                    <?php endif; ?>
-                                                    <a href="javascript:eliminar_adjunto(<?php echo $Adjunto->id; ?>, '<?php echo $Adjunto->nombre; ?>')" title="Eliminar adjunto"><i class="fa fa-remove"></i></a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="caption" style="height:60px;">
-                                            <p>
-                                                <b><?php echo $Adjunto->tipo_adjunto; ?></b><br>
-                                                <?php echo $Adjunto->descripcion; ?>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+
                         <?php if (!empty($array_adjuntos_eliminar)): ?>
                             <?php foreach ($array_adjuntos_eliminar as $Adjunto): ?>
-                                <input type='hidden' name='adjunto_eliminar[<?php echo $Adjunto->id; ?>]' value='<?php echo $Adjunto->nombre; ?>'>
+                                <input  name='adjunto_eliminar[<?php echo $Adjunto->id; ?>]' value='<?php echo $Adjunto->nombre; ?>'>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </div>
                 </div>
-
-
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          <div class="text-center envi">
+</section>
+<section>
+                <div class="text-center envi">
                         <?php echo (!empty($txt_btn)) ? form_submit($data_submit, $txt_btn) : ''; ?>
-                        <?php echo ($txt_btn === 'Editar' || $txt_btn === 'Eliminar') ? form_hidden('id', $empleo->cuil) : ''; ?>
+                        <?php echo ($txt_btn === 'Editar' || $txt_btn === 'Eliminar') ? form_hidden('id', $cuil) : ''; ?>
                         <a href="oficina_de_empleo/pedir_empleo/listar" class="btn btn-default btn-sm">Cancelar</a> 
                 </div>
+            </section>
                 <?php echo form_close(); ?>
-            </div>
-        </div>
+                
+            
+        </article>
     </div>
 </div>
       
-                <script>
-	var csrfData = '<?php echo $this->security->get_csrf_hash(); ?>';
-	$(document).on('click', '[data-toggle="lightbox"]', function(event) {
-		event.preventDefault();
-		$(this).ekkoLightbox({
-			alwaysShowClose: true
-		});
-	});
 
-	function eliminar_adjunto(adjunto_id, adjunto_nombre, documento_id) {
-		if (documento_id !== undefined) {
-			var name = 'adjunto_eliminar_existente';
-		} else {
-			var name = 'adjunto_eliminar';
-		}
-		Swal.fire({
-			title: 'Confirmar',
-			text: "Se eliminará el adjunto",
-			type: 'info',
-			showCloseButton: true,
-			showCancelButton: true,
-			focusCancel: true,
-			buttonsStyling: false,
-			confirmButtonClass: 'btn btn-primary',
-			cancelButtonClass: 'btn btn-default',
-			confirmButtonText: 'Aceptar',
-			cancelButtonText: 'Cancelar'
-		}).then((result) => {
-			if (result.value) {
-				$('#adjuntos-container').append("<input type='hidden' name='" + name + "[" + adjunto_id + "]' value='" + adjunto_nombre + "'>");
-				$('#adjunto_' + adjunto_id).remove();
-			}
-		});
-	}
-</script>
                 <script>  
-                    //***esto toma los datos que no se crean bien y los mete en un div del form antes de salir de la pagina para enviar***
-                    let idioma=document.querySelectorAll(".idioma");
-                    let idiomaN=document.querySelectorAll(".Nidioma");
-                    let compu=document.querySelectorAll(".computacio");
-                    let compuN=document.querySelectorAll(".Ncomputacio");
-                    const otroFragmento = document.createDocumentFragment();
-                    const conten=document.querySelector(".otro");
-
-                    let compilador=function(arra1,arra2,nombre){
-                        let compilado;
-                        for (let index = 0; index < arra1.length; index++) {
-                             compilado += (arra1[index]['value']!='undefined')?(arra1[index]['value']+" "+(arra2[index]['value']?arra2[index]['value']:" ")+" , "):"" ;
-                             let newInput= document.createElement("INPUT");
-                            newInput.setAttribute("name",nombre);
-                            newInput.setAttribute("value",compilado);
-                            newInput.setAttribute("hidden","true");
-                            newInput.setAttribute("id",nombre);
-                            otroFragmento.appendChild(newInput);
-                        };
-                            conten.appendChild(otroFragmento);
-                    };
-                  
-                    let relleno=function(){
-                        compilador(idioma,idiomaN,"idiomas");
-                        compilador(compu,compuN,"computacion");    
-                    };  
-               //      window.onbeforeunload = relleno();                   
-
+               
                 //***estas funciones combinan los select para poder ser leidos por el controlador***
                 const LisHorarioCap = document.getElementById('horAArio_cap');
                 const LisoficiosAA = document.getElementById("oficiosAA ");
@@ -589,7 +505,22 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
                 const LisDispLab = document.getElementById("disponib_lAAb");
                 const LiscondicAA = document.getElementById("condicAA ");
 
-                function combinnna(e,elemento){
+                function combi(elemento,clase){     //para los campos agregables
+                    arrayy = document.querySelectorAll("."+ clase);
+                    console.log("ejecuta combi")
+                    let bastardo=document.getElementById(elemento)
+                    let compi=" ";
+                    for (let i = 1; i < arrayy.length; i++) {
+                        let eleme=arrayy[i];
+                        if(!(eleme==undefined||eleme==null||eleme==""||eleme==" ")){
+                           compi =compi +","+ (eleme['value']);
+                        console.log(compi) 
+                        }
+                    };
+                     bastardo.value=compi;
+                };
+
+                function combinnna(e,elemento){     //para los select multiples
                     let bueno=document.getElementById(elemento);
                     let bastardo=elemento.replace("AA ","");
                     bastardo=bastardo.replace("AA","a");
@@ -609,8 +540,9 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
                 LisIntLab.onchange = (e) => { combinnna(e,'interes_lAAb')};
                 LisDispLab.onchange = (e) => { combinnna(e,'disponib_lAAb')};
                 LiscondicAA.onchange = (e) => { combinnna(e,'condicAA ')};
+                $('#poliglota').change(function(event){ combi('idiomas','idioma')});
+                $('#tecno').change(function(event){ combi('computacion','computacio')});
                 </script>
-
 
 <?php echo (!empty($audi_modal) ? $audi_modal : ''); ?>
 
@@ -621,9 +553,8 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
         $('form .change_col').find('label.col-sm-2').removeClass('col-sm-2').addClass('col-sm-3');
         $('.obs').find('div.col-sm-10').removeClass('col-sm-10').addClass('col-sm-12');
     });
-</script>
 
-<script>
+    //estos metodos crean las opciones de los select
     const grAAdo_carr = ['Analista','Auxiliar','Doctorado','Ingeniería','Licenciatura','Maestro','Profesorado','Tecnicatura'];
     const carreras = ['Abogacía','Acompañante Terapeutico','Administración','Administración Contable','Agente Sanitario','Agronomía','Anestesista','Arquitectura','Bioimágen','Bioquímica','Bromatología',
     'Ciencias Políticas y Administración Pública','Cine y Video','Civil','Comercio Exterior','Comunicación Digital','Comunicación Social','Contador','Criminología',
@@ -699,8 +630,9 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
         newDiv2.setAttribute("class","dropdown  form-control bs3"); //este es el que caga tooo  ***  bootstrap-select
 
         let newSelect = document.createElement("SELECT");
+        newSelect.setAttribute("id",classse);
         newSelect.setAttribute("name",classse);
-        newSelect.setAttribute("class","form-select "+classse+" "+clase);
+        newSelect.setAttribute("class","form-select "+" "+clase+" "+clase+"ss");
         newSelect.setAttribute("title","--"+nombre+"--");
         newSelect.setAttribute("placeholder","--"+nombre+"--");
         newSelect.setAttribute("data-live-search","true");
@@ -728,7 +660,7 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
         newInput.setAttribute("name","idiomaN");
         newInput.setAttribute("type","number");
         newInput.setAttribute("maxlength","1");
-        newInput.setAttribute("class","form-control N"+clase);
+        newInput.setAttribute("class","form-control N"+clase+ " "+ clase);
         newDiv3.appendChild(newInput);
 
         let newBoton = document.createElement("BUTTON");
@@ -745,12 +677,15 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
         cont.appendChild(newDiv);
         conten.appendChild(cont);
 
-        optar(arraii,("."+classse));
+        optar(arraii,(classse));
     };
 // borrar campo
     $(document).on('click', '#removeRow', function(){
         $(this).closest('#poliglota1').remove();
     });
+    
+    var LisIdiomAAs = document.querySelectorAll(".idioma");
+    var LisComputAAs = document.querySelectorAll(".computacio");
 
     let botonIdiom=document.getElementById("addCampo");
     botonIdiom.addEventListener("click",functi=>crearCampo("poliglota","idioma",idiomas,"idioma"));       
@@ -758,9 +693,7 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
     let botonCompu=document.getElementById("addCampoCompu");
     botonCompu.addEventListener("click",functi=>crearCampo("tecno","computacio",computacion,"programa"));
 
-</script>
 
-<script>
 	$(document).ready(function() {
 		domicilio_row();
 		$('#cuil').inputmask({
@@ -776,13 +709,11 @@ function eliminar_adjunto(adjunto_id, adjunto_nombre, empleo_id) {
 					$("#row-domicilio").show();
 			}
 	});
-</script>
-
-<script>
                  
-//***esto toma los datos que no se cargan bien, elimina el campo input donde se cargan y reescribe los campos select, que ya son creados por ala funcion de mas arriba
+//***esto toma los datos que no se cargan bien y reescribe los campos select, que ya son creados por ala funcion de mas arriba
 
-    function reemplazar(elemento){              let bueno=document.getElementById(elemento);
+    function reemplazar(elemento){              
+        let bueno=document.getElementById(elemento);
         let bastardo=elemento.replace("AA ","");
         bastardo=bastardo.replace("AA","a");
         bastardo=document.getElementById(bastardo);
@@ -815,4 +746,51 @@ window.onload = function (){
     reemplazar("disponib_lAAb");
     reemplazar("condicAA ");
 }
+
+    function reemplazar2(bastard,contenedor,selector,arraySel,nombre){  //elemento es un  string
+        let bastardo=document.getElementById(bastard);
+        let valores=(bastardo.getAttribute('value')!=null)?bastardo.getAttribute('value'):"";
+        let valorArr=valores.split(",");
+        if(valores!=""){
+            for (let i = 1; i < valorArr.length; i++) {
+                 const element = valorArr[i];
+                 if(i>1 && i%2!=0 && !(element==""||element==null||element==undefined) && (i+1)<valorArr.length){
+                    crearCampo(contenedor,selector,arraySel,nombre); 
+                 }
+                if(i%2!=0){
+let objeto=document.querySelectorAll('.'+selector+'ss');
+objeto=objeto[(objeto.length)-1];
+                    let primo=objeto.firstElementChild;
+                    for (let inde = 0; inde < objeto.children.length; inde++) {
+                    if (element==primo.getAttribute('value')) {
+                        primo.setAttribute("selected","selected");        
+                        break;
+                    };
+                        primo=primo.nextElementSibling;     
+                };
+                let inp=document.querySelectorAll('.N'+selector);
+                inp=inp[(inp.length)-1];
+                inp.setAttribute('value',(valorArr[i+1]))
+                }
+}
+         };
+    }
+
+    reemplazar2("idiomas","poliglota","idioma",idiomas,"idioma");
+    reemplazar2("computacion",'tecno',"computacio",computacion,"programa");
+
+    function reemplazar3(nombre,nombre2){
+        let res=document.getElementById(nombre);
+        if(res.getAttribute('value')=="s"){
+            let otro=document.getElementById(nombre2);
+            res.setAttribute('value',"");
+            otro.setAttribute('checked',true);
+        }
+    }
+    reemplazar3('capacitacion','capacitacio');
+    reemplazar3('busca_empleo','busca_emple');
+    reemplazar3('exmuni','exmun');
+    reemplazar3('famimuni','famimun');
+    reemplazar3('hijos','hijo');
+
 </script>
