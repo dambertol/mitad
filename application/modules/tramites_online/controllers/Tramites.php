@@ -321,7 +321,7 @@ class Tramites extends MY_Controller
             show_error('No se encontró el Iniciador', 500, 'Registro no encontrado');
         }
 
-        // BUSCA EL PROCESO PARA VERIFICAR SI EL INICIADOR TIENE PERMISOS
+        // BUSCA EL PROCESO PARA VERIFICAR SI EL INICIADOR TIENE PERMISOS trans
         $proceso = $this->get_array('Procesos', 'nombre', 'id',
             array(
                 'join' => array(
